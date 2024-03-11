@@ -1,0 +1,8 @@
+# Django
+DJANGO_ALLOWED_HOSTS=*
+DJANGO_SECRET_KEY=ThisIsAnExampleKeyForDevPurposeOnly
+DJANGO_SETTINGS_MODULE=oidc2fer.settings
+DJANGO_SUPERUSER_PASSWORD=admin
+
+# Python
+PYTHONPATH=/app
