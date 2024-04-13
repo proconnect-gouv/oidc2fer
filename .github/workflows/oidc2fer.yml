@@ -71,7 +71,10 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install development dependencies
-        run: pip install --user .[dev]
+        run: |
+          # Python's xmlsec requirement
+          sudo apt-get update -y -q && sudo apt-get install -y -q libxmlsec1-dev
+          pip install --user .[dev]
       - name: Check code formatting with ruff
         run: ~/.local/bin/ruff format . --diff
       - name: Lint code with ruff
@@ -120,7 +123,10 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install development dependencies
-        run: pip install --user .[dev]
+        run: |
+          # Python's xmlsec requirement
+          sudo apt-get update -y -q && sudo apt-get install -y -q libxmlsec1-dev
+          pip install --user .[dev]
       - name: Install gettext (required to compile messages)
         run: |
           sudo apt-get update
@@ -148,7 +154,10 @@ jobs:
 
       - name: Install development dependencies
         working-directory: src/backend
-        run: pip install --user .[dev]
+        run: |
+          # Python's xmlsec requirement
+          sudo apt-get update -y -q && sudo apt-get install -y -q libxmlsec1-dev
+          pip install --user .[dev]
 
       - name: Generate the translation base file
         run: ~/.local/bin/django-admin makemessages --keep-pot --all
