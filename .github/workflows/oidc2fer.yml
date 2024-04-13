@@ -69,7 +69,7 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v3
         with:
-          python-version: '3.10'
+          python-version: '3.11'
       - name: Install development dependencies
         run: pip install --user .[dev]
       - name: Check code formatting with ruff
@@ -118,7 +118,7 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v3
         with:
-          python-version: '3.10'
+          python-version: '3.11'
       - name: Install development dependencies
         run: pip install --user .[dev]
       - name: Install gettext (required to compile messages)
@@ -144,7 +144,7 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v3
         with:
-          python-version: '3.10'
+          python-version: '3.11'
 
       - name: Install development dependencies
         working-directory: src/backend
