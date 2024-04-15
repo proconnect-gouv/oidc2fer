@@ -44,7 +44,6 @@ COMPOSE_EXEC_APP    = $(COMPOSE_EXEC) app-dev
 COMPOSE_RUN         = $(COMPOSE) run --rm
 COMPOSE_RUN_APP     = $(COMPOSE_RUN) app-dev
 WAIT_DB             = @$(COMPOSE_RUN) dockerize -wait tcp://$(DB_HOST):$(DB_PORT) -timeout 60s
-WAIT_KC_DB          = $(COMPOSE_RUN) dockerize -wait tcp://kc_postgresql:5432 -timeout 60s
 
 # -- Backend
 MANAGE              = $(COMPOSE_RUN_APP) python manage.py
@@ -65,8 +64,7 @@ data/static:
 create-env-files: ## Copy the dist env files to env files
 create-env-files: \
 	env.d/development/common \
-	env.d/development/postgresql \
-	env.d/development/kc_postgresql
+	env.d/development/postgresql
 .PHONY: create-env-files
 
 bootstrap: ## Prepare Docker images for the project
@@ -95,9 +93,7 @@ logs: ## display app-dev logs (follow mode)
 run: ## start the wsgi (production) and development server
 	@$(COMPOSE) up --force-recreate -d nginx
 	@$(COMPOSE) up --force-recreate -d app-dev
-	@$(COMPOSE) up --force-recreate -d keycloak
 	@echo "Wait for postgresql to be up..."
-	@$(WAIT_KC_DB)
 	@$(WAIT_DB)
 .PHONY: run
 
@@ -188,9 +184,6 @@ env.d/development/common:
 
 env.d/development/postgresql:
 	cp -n env.d/development/postgresql.dist env.d/development/postgresql
-
-env.d/development/kc_postgresql:
-	cp -n env.d/development/kc_postgresql.dist env.d/development/kc_postgresql
 
 # -- Misc
 clean: ## restore repository state as it was freshly cloned
