@@ -62,15 +62,6 @@ services:
   dockerize:
     image: jwilder/dockerize
 
-  crowdin:
-    image: crowdin/cli:3.16.0
-    volumes:
-      - ".:/app"
-    env_file:
-      - env.d/development/crowdin
-    user: "${DOCKER_USER:-1000}"
-    working_dir: /app
-
   kc_postgresql:
       image: postgres:14.3
       platform: linux/amd64
