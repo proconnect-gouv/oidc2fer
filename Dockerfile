@@ -93,11 +93,6 @@ FROM core as development
 # Switch back to the root user to install development dependencies
 USER root:root
 
-# Install psql
-RUN apt-get update && \
-    apt-get install -y postgresql-client && \
-    rm -rf /var/lib/apt/lists/*
-
 # Uninstall oidc2fer and re-install it in editable mode along with development
 # dependencies
 RUN pip uninstall -y oidc2fer
@@ -106,11 +101,6 @@ RUN pip install -e .[dev]
 # Restore the un-privileged user running the application
 ARG DOCKER_USER
 USER ${DOCKER_USER}
-
-# Target database host (e.g. database engine following docker compose services
-# name) & port
-ENV DB_HOST=postgresql \
-    DB_PORT=5432
 
 # Run django development server
 CMD python manage.py runserver 0.0.0.0:8000

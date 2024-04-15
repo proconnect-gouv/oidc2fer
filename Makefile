@@ -28,11 +28,6 @@ RESET := \033[0m
 GREEN := \033[1;32m
 
 
-# -- Database
-
-DB_HOST            = postgresql
-DB_PORT            = 5432
-
 # -- Docker
 # Get the current user ID to use for docker run and docker exec commands
 DOCKER_UID          = $(shell id -u)
@@ -43,7 +38,6 @@ COMPOSE_EXEC        = $(COMPOSE) exec
 COMPOSE_EXEC_APP    = $(COMPOSE_EXEC) app-dev
 COMPOSE_RUN         = $(COMPOSE) run --rm
 COMPOSE_RUN_APP     = $(COMPOSE_RUN) app-dev
-WAIT_DB             = @$(COMPOSE_RUN) dockerize -wait tcp://$(DB_HOST):$(DB_PORT) -timeout 60s
 
 # -- Backend
 MANAGE              = $(COMPOSE_RUN_APP) python manage.py
@@ -63,8 +57,7 @@ data/static:
 
 create-env-files: ## Copy the dist env files to env files
 create-env-files: \
-	env.d/development/common \
-	env.d/development/postgresql
+	env.d/development/common
 .PHONY: create-env-files
 
 bootstrap: ## Prepare Docker images for the project
@@ -93,8 +86,6 @@ logs: ## display app-dev logs (follow mode)
 run: ## start the wsgi (production) and development server
 	@$(COMPOSE) up --force-recreate -d nginx
 	@$(COMPOSE) up --force-recreate -d app-dev
-	@echo "Wait for postgresql to be up..."
-	@$(WAIT_DB)
 .PHONY: run
 
 status: ## an alias for "docker compose ps"
@@ -144,20 +135,6 @@ test-back-parallel: ## run all back-end tests in parallel
 	bin/pytest -n auto $${args:-${1}}
 .PHONY: test-back-parallel
 
-makemigrations:  ## run django makemigrations for the oidc2fer project.
-	@echo "$(BOLD)Running makemigrations$(RESET)"
-	@$(COMPOSE) up -d postgresql
-	@$(WAIT_DB)
-	@$(MANAGE) makemigrations
-.PHONY: makemigrations
-
-migrate:  ## run django migrations for the oidc2fer project.
-	@echo "$(BOLD)Running migrations$(RESET)"
-	@$(COMPOSE) up -d postgresql
-	@$(WAIT_DB)
-	@$(MANAGE) migrate
-.PHONY: migrate
-
 superuser: ## Create an admin superuser with password "admin"
 	@echo "$(BOLD)Creating a Django superuser$(RESET)"
 	@$(MANAGE) createsuperuser --email admin@example.com --password admin
@@ -181,9 +158,6 @@ resetdb: ## flush database and create a superuser "admin"
 
 env.d/development/common:
 	cp -n env.d/development/common.dist env.d/development/common
-
-env.d/development/postgresql:
-	cp -n env.d/development/postgresql.dist env.d/development/postgresql
 
 # -- Misc
 clean: ## restore repository state as it was freshly cloned

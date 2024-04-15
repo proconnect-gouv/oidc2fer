@@ -88,28 +88,11 @@ jobs:
       run:
         working-directory: src/backend
 
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_DB: oidc2fer
-          POSTGRES_USER: dinum
-          POSTGRES_PASSWORD: pass
-        ports:
-          - 5432:5432
-        # needed because the postgres container does not provide a healthcheck
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-
     env:
       DJANGO_CONFIGURATION: Test
       DJANGO_SETTINGS_MODULE: oidc2fer.settings
       DJANGO_SECRET_KEY: ThisIsAnExampleKeyForTestPurposeOnly
       OIDC_OP_JWKS_ENDPOINT: /endpoint-for-test-purpose-only
-      DB_HOST: localhost
-      DB_NAME: oidc2fer
-      DB_USER: dinum
-      DB_PASSWORD: pass
-      DB_PORT: 5432
 
     steps:
       - name: Checkout repository

@@ -1,11 +1,4 @@
 services:
-  postgresql:
-    image: postgres:16
-    env_file:
-      - env.d/development/postgresql
-    ports:
-      - "15432:5432"
-
   app-dev:
     build:
       context: .
@@ -19,15 +12,12 @@ services:
       - DJANGO_CONFIGURATION=Development
     env_file:
       - env.d/development/common
-      - env.d/development/postgresql
     ports:
       - "8071:8000"
     volumes:
       - ./src/backend:/app
       - ./data/media:/data/media
       - ./data/static:/data/static
-    depends_on:
-        - postgresql
   
   app:
     build:
@@ -41,11 +31,8 @@ services:
       - DJANGO_CONFIGURATION=Demo
     env_file:
       - env.d/development/common
-      - env.d/development/postgresql
     volumes:
       - ./data/media:/data/media
-    depends_on:
-      - postgresql
 
   nginx:
     image: nginx:1.25
@@ -57,6 +44,3 @@ services:
       - ./data/media:/data/media:ro
     depends_on:
       - app
-
-  dockerize:
-    image: jwilder/dockerize
