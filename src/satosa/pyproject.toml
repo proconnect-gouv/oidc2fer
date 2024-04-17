@@ -24,7 +24,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "SATOSA==8.4.0",
-    "gunicorn==21.2.0",
+    "gunicorn==22.0.0",
 ]
 
 [project.urls]
