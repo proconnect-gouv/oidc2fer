@@ -31,7 +31,7 @@ dependencies = [
     "django-timezone-field>=5.1",
     "dockerflow==2024.2.0",
     "factory_boy==3.3.0",
-    "gunicorn==21.2.0",
+    "gunicorn==22.0.0",
     "psycopg[binary]==3.1.18",
     "requests==2.31.0",
     "sentry-sdk==1.40.6",
