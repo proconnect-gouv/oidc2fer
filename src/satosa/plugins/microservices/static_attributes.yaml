@@ -1,0 +1,13 @@
+module: satosa.micro_services.attribute_modifications.AddStaticAttributes
+name: AddAttributes
+config:
+  static_attributes:
+    organisation: Example Org.
+    schachomeorganization: example.com
+    schachomeorganizationtype:
+      - urn:schac:homeOrganizationType:eu:higherEducationInstitution
+      - urn:schac:homeOrganizationType:eu:educationInstitution
+    organizationname: Example Organization
+    noreduorgacronym: EO
+    countryname: SE
+    friendlycountryname: Sweden

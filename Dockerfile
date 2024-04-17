@@ -1,5 +1,3 @@
-# Django OIDC2FER
-
 # ---- base image to inherit from ----
 FROM python:3.11-slim-bookworm as base
 
@@ -10,6 +8,7 @@ RUN apt-get update && \
     apt-get install -y \
         pkg-config \
         gcc \
+        xmlsec1 \
         libxml2-dev \
         libxmlsec1-dev \
         libxmlsec1-openssl && \
@@ -24,36 +23,10 @@ FROM base as back-builder
 WORKDIR /builder
 
 # Copy required python dependencies
-COPY ./src/backend /builder
+COPY ./src/satosa /builder
 
 RUN mkdir /install && \
   pip install --prefix=/install .
-
-# ---- static link collector ----
-FROM base as link-collector
-ARG OIDC2FER_STATIC_ROOT=/data/static
-
-# Install rdfind
-RUN apt-get update && \
-    apt-get install -y \
-      rdfind && \
-    rm -rf /var/lib/apt/lists/*
-
-# Copy installed python dependencies
-COPY --from=back-builder /install /usr/local
-
-# Copy oidc2fer application (see .dockerignore)
-COPY ./src/backend /app/
-
-WORKDIR /app
-
-# collectstatic
-RUN DJANGO_CONFIGURATION=Build DJANGO_JWT_PRIVATE_SIGNING_KEY=Dummy \
-    python manage.py collectstatic --noinput
-
-# Replace duplicated file by a symlink to decrease the overall size of the
-# final image
-RUN rdfind -makesymlinks true -followsymlinks true -makeresultsfile false ${OIDC2FER_STATIC_ROOT}
 
 # ---- Core application image ----
 FROM base as core
@@ -78,7 +51,7 @@ RUN chmod g=u /etc/passwd
 COPY --from=back-builder /install /usr/local
 
 # Copy oidc2fer application (see .dockerignore)
-COPY ./src/backend /app/
+COPY ./src/satosa /app/
 
 WORKDIR /app
 
@@ -87,8 +60,22 @@ WORKDIR /app
 # ID.
 ENTRYPOINT [ "/usr/local/bin/entrypoint" ]
 
+# ---- Production image ----
+FROM core as production
+
+# Gunicorn
+RUN mkdir -p /usr/local/etc/gunicorn
+COPY docker/files/usr/local/etc/gunicorn/satosa.py /usr/local/etc/gunicorn/satosa.py
+
+# Un-privileged user running the application
+ARG DOCKER_USER
+USER ${DOCKER_USER}
+
+# The default command runs gunicorn WSGI server in satosa's main module
+CMD ["gunicorn", "-c", "/usr/local/etc/gunicorn/satosa.py", "satosa.wsgi:app"]
+
 # ---- Development image ----
-FROM core as development
+FROM production as development
 
 # Switch back to the root user to install development dependencies
 USER root:root
@@ -101,25 +88,3 @@ RUN pip install -e .[dev]
 # Restore the un-privileged user running the application
 ARG DOCKER_USER
 USER ${DOCKER_USER}
-
-# Run django development server
-CMD python manage.py runserver 0.0.0.0:8000
-
-# ---- Production image ----
-FROM core as production
-
-ARG OIDC2FER_STATIC_ROOT=/data/static
-
-# Gunicorn
-RUN mkdir -p /usr/local/etc/gunicorn
-COPY docker/files/usr/local/etc/gunicorn/oidc2fer.py /usr/local/etc/gunicorn/oidc2fer.py
-
-# Un-privileged user running the application
-ARG DOCKER_USER
-USER ${DOCKER_USER}
-
-# Copy statics
-COPY --from=link-collector ${OIDC2FER_STATIC_ROOT} ${OIDC2FER_STATIC_ROOT}
-
-# The default command runs gunicorn WSGI server in oidc2fer's main module
-CMD gunicorn -c /usr/local/etc/gunicorn/oidc2fer.py oidc2fer.wsgi:application

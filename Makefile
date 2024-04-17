@@ -39,35 +39,24 @@ COMPOSE_EXEC_APP    = $(COMPOSE_EXEC) app-dev
 COMPOSE_RUN         = $(COMPOSE) run --rm
 COMPOSE_RUN_APP     = $(COMPOSE_RUN) app-dev
 
-# -- Backend
-MANAGE              = $(COMPOSE_RUN_APP) python manage.py
-
 # ==============================================================================
 # RULES
 
 default: help
 
-data/media:
-	@mkdir -p data/media
-
-data/static:
-	@mkdir -p data/static
-
 # -- Project
 
 create-env-files: ## Copy the dist env files to env files
 create-env-files: \
-	env.d/development/common
+	env.d/development/common \
+	env.d/development/satosa
 .PHONY: create-env-files
 
 bootstrap: ## Prepare Docker images for the project
 bootstrap: \
-	data/media \
-	data/static \
 	create-env-files \
 	build \
-	run \
-	migrate
+	run
 .PHONY: bootstrap
 
 # -- Docker/compose
@@ -122,7 +111,7 @@ lint-pylint: ## lint back-end python sources with pylint only on changed files f
 .PHONY: lint-pylint
 
 test: ## run project tests
-	@$(MAKE) test-back-parallel
+	@$(MAKE) test-back
 .PHONY: test
 
 test-back: ## run back-end tests
@@ -130,34 +119,9 @@ test-back: ## run back-end tests
 	bin/pytest $${args:-${1}}
 .PHONY: test-back
 
-test-back-parallel: ## run all back-end tests in parallel
-	@args="$(filter-out $@,$(MAKECMDGOALS))" && \
-	bin/pytest -n auto $${args:-${1}}
-.PHONY: test-back-parallel
-
-superuser: ## Create an admin superuser with password "admin"
-	@echo "$(BOLD)Creating a Django superuser$(RESET)"
-	@$(MANAGE) createsuperuser --email admin@example.com --password admin
-.PHONY: superuser
-
-shell: ## connect to database shell
-	@$(MANAGE) shell #_plus
-.PHONY: dbshell
-
-# -- Database
-
-dbshell: ## connect to database shell
-	docker compose exec app-dev python manage.py dbshell
-.PHONY: dbshell
-
-resetdb: ## flush database and create a superuser "admin"
-	@echo "$(BOLD)Flush database$(RESET)"
-	@$(MANAGE) flush
-	@${MAKE} superuser
-.PHONY: resetdb
-
 env.d/development/common:
 	cp -n env.d/development/common.dist env.d/development/common
+	cp -n env.d/development/satosa.dist env.d/development/satosa
 
 # -- Misc
 clean: ## restore repository state as it was freshly cloned

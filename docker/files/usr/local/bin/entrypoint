@@ -31,5 +31,13 @@ if ! whoami > /dev/null 2>&1; then
   fi
 fi
 
+echo "🐳(entrypoint) creating config files from environment..."
+mkdir -p /tmp
+# These files are referenced by the Satosa config files
+printenv SAML2_BACKEND_CERT > /tmp/backend.crt
+printenv SAML2_BACKEND_KEY > /tmp/backend.key
+printenv OIDC_FRONTEND_KEY > /tmp/frontend.key
+printenv CLIENT_DB_JSON > /tmp/client_db.json
+
 echo "🐳(entrypoint) running your command: ${*}"
 exec "$@"

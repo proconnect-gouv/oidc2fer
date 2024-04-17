@@ -1,0 +1,53 @@
+module: satosa.backends.saml2.SAMLBackend
+name: Saml2
+config:
+  disco_srv: https://discovery.renater.fr/test/
+  entityid_endpoint: true
+  mirror_force_authn: 'no'
+  memorize_idp: 'no'
+  use_memorized_idp_when_force_authn: 'no'
+  send_requester_id: 'no'
+  enable_metadata_reload: 'no'
+  acs_selection_strategy: prefer_matching_host
+  sp_config:
+    name: Passerelle OIDC vers FER
+    description: SP Description
+    key_file: /tmp/backend.key
+    cert_file: /tmp/backend.crt
+    organization:
+      name: DINUM
+      display_name: DINUM
+      url: https://beta.gouv.fr/incubateurs/dinum_produits_interministeriels.html
+    metadata:
+      # mdq:
+      #   - url: https://mdq.federation.renater.fr
+      remote:
+        - url: https://pub.federation.renater.fr/metadata/test/preview/preview-idps-test-metadata.xml
+    entityid: <base_url>/<name>/proxy_saml2_backend.xml
+    accepted_time_diff: 60
+    allow_unknown_attributes: true
+    service:
+      sp:
+        ui_info:
+          display_name:
+            - lang: fr
+              text: Passerelle OIDC vers FER
+          logo:
+            text: https://beta.gouv.fr/img/incubators/logo_dinum.png
+            width: '200'
+            height: '200'
+        authn_requests_signed: true
+        want_response_signed: true
+        allow_unsolicited: true
+        name_id_format:
+          - urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress
+          - urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified
+        endpoints:
+          assertion_consumer_service:
+            - - <base_url>/<name>/acs/post
+              - urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST
+          discovery_response:
+            - - <base_url>/<name>/disco
+              - 'urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol'
+
+        name_id_format_allow_create: true

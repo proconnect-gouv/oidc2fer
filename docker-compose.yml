@@ -9,16 +9,12 @@ services:
     image: oidc2fer:development
     environment:
       - PYLINTHOME=/app/.pylint.d
-      - DJANGO_CONFIGURATION=Development
     env_file:
       - env.d/development/common
-    ports:
-      - "8071:8000"
+      - env.d/development/satosa
     volumes:
-      - ./src/backend:/app
-      - ./data/media:/data/media
-      - ./data/static:/data/static
-  
+      - ./src/satosa:/app
+
   app:
     build:
       context: .
@@ -27,20 +23,14 @@ services:
         DOCKER_USER: ${DOCKER_USER:-1000}
     user: ${DOCKER_USER:-1000}
     image: oidc2fer:production
-    environment:
-      - DJANGO_CONFIGURATION=Demo
     env_file:
       - env.d/development/common
-    volumes:
-      - ./data/media:/data/media
+      - env.d/development/satosa
 
   nginx:
     image: nginx:1.25
     ports:
+      - "8081:8081"
       - "8082:8082"
-      - "8088:8088"
     volumes:
       - ./docker/files/etc/nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./data/media:/data/media:ro
-    depends_on:
-      - app

@@ -11,8 +11,6 @@ version = "0.1.0"
 authors = [{ "name" = "DINUM", "email" = "dev@mail.numerique.gouv.fr" }]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
-    "Framework :: Django",
-    "Framework :: Django :: 5",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
@@ -20,25 +18,13 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
 ]
 description = "An application to handle contacts and teams."
-keywords = ["Django", "OIDC", "SAML", "Shibboleth", "FER", "RENATER"]
+keywords = ["OIDC", "SAML", "Shibboleth", "FER", "RENATER"]
 license = { file = "LICENSE" }
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "django-configurations==2.5",
-    "django-cors-headers==4.3.1",
-    "django==5.0.2",
-    "django-timezone-field>=5.1",
-    "dockerflow==2024.2.0",
-    "factory_boy==3.3.0",
+    "SATOSA==8.4.0",
     "gunicorn==21.2.0",
-    "psycopg[binary]==3.1.18",
-    "requests==2.31.0",
-    "sentry-sdk==1.40.6",
-    "social-auth-app-django==5.4.0",
-    "social-auth-core[saml]==4.5.3",
-    "social-edu-federation==2.1.1",
-    "whitenoise==6.6.0",
 ]
 
 [project.urls]
@@ -49,20 +35,10 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "django-extensions==3.2.3",
-    "ipdb==0.13.13",
-    "ipython==8.22.1",
-    "pyfakefs==5.3.5",
-    "pylint-django==2.5.5",
     "pylint==3.1.0",
     "pytest-cov==4.1.0",
-    "pytest-django==4.8.0",
     "pytest==8.0.2",
-    "pytest-icdiff==0.9",
-    "pytest-xdist==3.5.0",
-    "responses==0.25.0",
     "ruff==0.2.2",
-    "types-requests==2.31.0.20240218",
 ]
 
 [tool.setuptools]
@@ -79,7 +55,6 @@ exclude = [
     "build",
     "venv",
     "__pycache__",
-    "*/migrations/*",
 ]
 line-length = 88
 
@@ -90,7 +65,6 @@ select = [
     "B", # flake8-bugbear
     "BLE", # flake8-blind-except
     "C4", # flake8-comprehensions
-    "DJ", # flake8-django
     "I", # isort
     "PLC", # pylint-convention
     "PLE", # pylint-error
@@ -104,8 +78,8 @@ select = [
 ]
 
 [tool.ruff.lint.isort]
-section-order = ["future","standard-library","django","third-party","oidc2fer","first-party","local-folder"]
-sections = { oidc2fer=["core"], django=["django"] }
+section-order = ["future","standard-library","third-party","oidc2fer","first-party","local-folder"]
+sections = { oidc2fer=["core"] }
 
 [tool.ruff.lint.per-file-ignores]
 "**/tests/*" = ["S", "SLF"]

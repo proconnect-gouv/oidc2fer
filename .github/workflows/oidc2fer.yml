@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: src/backend
+        working-directory: src/satosa
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -73,7 +73,7 @@ jobs:
       - name: Install development dependencies
         run: |
           # Python's xmlsec requirement
-          sudo apt-get update -y -q && sudo apt-get install -y -q libxmlsec1-dev
+          sudo apt-get update -y -q && sudo apt-get install -y -q xmlsec1 libxmlsec1-dev
           pip install --user .[dev]
       - name: Check code formatting with ruff
         run: ~/.local/bin/ruff format . --diff
@@ -86,21 +86,11 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: src/backend
-
-    env:
-      DJANGO_CONFIGURATION: Test
-      DJANGO_SETTINGS_MODULE: oidc2fer.settings
-      DJANGO_SECRET_KEY: ThisIsAnExampleKeyForTestPurposeOnly
-      OIDC_OP_JWKS_ENDPOINT: /endpoint-for-test-purpose-only
+        working-directory: src/satosa
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Create writable /data
-        run: |
-          sudo mkdir -p /data/media && \
-          sudo mkdir -p /data/static
       - name: Install Python
         uses: actions/setup-python@v3
         with:
@@ -108,7 +98,7 @@ jobs:
       - name: Install development dependencies
         run: |
           # Python's xmlsec requirement
-          sudo apt-get update -y -q && sudo apt-get install -y -q libxmlsec1-dev
+          sudo apt-get update -y -q && sudo apt-get install -y -q xmlsec1 libxmlsec1-dev
           pip install --user .[dev]
       - name: Run tests
-        run: ~/.local/bin/pytest -n 2
+        run: ~/.local/bin/pytest

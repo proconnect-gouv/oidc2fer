@@ -47,17 +47,6 @@ Finally, you can check all available Make rules using:
 $ make help
 ```
 
-### Django admin
-
-You can access the Django admin site at
-[http://localhost:8071/admin](http://localhost:8071/admin).
-
-You first need to create a superuser account:
-
-```bash
-$ make superuser
-```
-
 ## Contributing
 
 This project is intended to be community-driven, so please, do not hesitate to

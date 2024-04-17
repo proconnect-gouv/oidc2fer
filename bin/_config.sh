@@ -84,15 +84,6 @@ function _dc_exec() {
     _docker_compose exec $user_args "$@"
 }
 
-# _django_manage: wrap django's manage.py command with docker compose
-#
-# usage : _django_manage [ARGS...]
-#
-# ARGS : django's manage.py command arguments
-function _django_manage() {
-    _dc_run "app-dev" python manage.py "$@"
-}
-
 # _set_openstack_project: select an OpenStack project from the openrc files defined in the
 # terraform directory.
 #
