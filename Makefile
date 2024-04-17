@@ -28,11 +28,6 @@ RESET := \033[0m
 GREEN := \033[1;32m
 
 
-# -- Database
-
-DB_HOST            = postgresql
-DB_PORT            = 5432
-
 # -- Docker
 # Get the current user ID to use for docker run and docker exec commands
 DOCKER_UID          = $(shell id -u)
@@ -43,43 +38,34 @@ COMPOSE_EXEC        = $(COMPOSE) exec
 COMPOSE_EXEC_APP    = $(COMPOSE_EXEC) app-dev
 COMPOSE_RUN         = $(COMPOSE) run --rm
 COMPOSE_RUN_APP     = $(COMPOSE_RUN) app-dev
-COMPOSE_RUN_CROWDIN = $(COMPOSE_RUN) crowdin crowdin
-WAIT_DB             = @$(COMPOSE_RUN) dockerize -wait tcp://$(DB_HOST):$(DB_PORT) -timeout 60s
-WAIT_KC_DB          = $(COMPOSE_RUN) dockerize -wait tcp://kc_postgresql:5432 -timeout 60s
-
-# -- Backend
-MANAGE              = $(COMPOSE_RUN_APP) python manage.py
 
 # ==============================================================================
 # RULES
 
 default: help
 
-data/media:
-	@mkdir -p data/media
-
-data/static:
-	@mkdir -p data/static
-
 # -- Project
+
+create-dev-certs: ## Create self-signed HTTPS certificates for development
+create-dev-certs:
+	rm -rf env.d/development/certs
+	mkdir -p env.d/development/certs
+	cp "$$(mkcert --CAROOT)/rootCA.pem" env.d/development/certs/mkcert-root-ca.pem
+	mkcert -key-file env.d/development/certs/key.pem -cert-file env.d/development/certs/cert.pem *.traefik.me
+.PHONY: create-dev-certs
 
 create-env-files: ## Copy the dist env files to env files
 create-env-files: \
 	env.d/development/common \
-	env.d/development/crowdin \
-	env.d/development/postgresql \
-	env.d/development/kc_postgresql
+	env.d/development/satosa
 .PHONY: create-env-files
 
 bootstrap: ## Prepare Docker images for the project
 bootstrap: \
-	data/media \
-	data/static \
+	create-dev-certs \
 	create-env-files \
 	build \
-	run \
-	migrate \
-	back-i18n-compile
+	run
 .PHONY: bootstrap
 
 # -- Docker/compose
@@ -95,13 +81,8 @@ logs: ## display app-dev logs (follow mode)
 	@$(COMPOSE) logs -f app-dev
 .PHONY: logs
 
-run: ## start the wsgi (production) and development server
-	@$(COMPOSE) up --force-recreate -d nginx
-	@$(COMPOSE) up --force-recreate -d app-dev
-	@$(COMPOSE) up --force-recreate -d keycloak
-	@echo "Wait for postgresql to be up..."
-	@$(WAIT_KC_DB)
-	@$(WAIT_DB)
+run: ## start the development servers
+	@$(COMPOSE) up --force-recreate --wait -d nginx app-dev oidc-test-client
 .PHONY: run
 
 status: ## an alias for "docker compose ps"
@@ -138,7 +119,7 @@ lint-pylint: ## lint back-end python sources with pylint only on changed files f
 .PHONY: lint-pylint
 
 test: ## run project tests
-	@$(MAKE) test-back-parallel
+	@$(MAKE) test-back
 .PHONY: test
 
 test-back: ## run back-end tests
@@ -146,101 +127,26 @@ test-back: ## run back-end tests
 	bin/pytest $${args:-${1}}
 .PHONY: test-back
 
-test-back-parallel: ## run all back-end tests in parallel
-	@args="$(filter-out $@,$(MAKECMDGOALS))" && \
-	bin/pytest -n auto $${args:-${1}}
-.PHONY: test-back-parallel
-
-makemigrations:  ## run django makemigrations for the oidc2fer project.
-	@echo "$(BOLD)Running makemigrations$(RESET)"
-	@$(COMPOSE) up -d postgresql
-	@$(WAIT_DB)
-	@$(MANAGE) makemigrations
-.PHONY: makemigrations
-
-migrate:  ## run django migrations for the oidc2fer project.
-	@echo "$(BOLD)Running migrations$(RESET)"
-	@$(COMPOSE) up -d postgresql
-	@$(WAIT_DB)
-	@$(MANAGE) migrate
-.PHONY: migrate
-
-superuser: ## Create an admin superuser with password "admin"
-	@echo "$(BOLD)Creating a Django superuser$(RESET)"
-	@$(MANAGE) createsuperuser --email admin@example.com --password admin
-.PHONY: superuser
-
-back-i18n-compile: ## compile the gettext files
-	@$(MANAGE) compilemessages --ignore="venv/**/*"
-.PHONY: back-i18n-compile
-
-back-i18n-generate: ## create the .pot files used for i18n
-	@$(MANAGE) makemessages -a --keep-pot
-.PHONY: back-i18n-generate
-
-shell: ## connect to database shell
-	@$(MANAGE) shell #_plus
-.PHONY: dbshell
-
-# -- Database
-
-dbshell: ## connect to database shell
-	docker compose exec app-dev python manage.py dbshell
-.PHONY: dbshell
-
-resetdb: ## flush database and create a superuser "admin"
-	@echo "$(BOLD)Flush database$(RESET)"
-	@$(MANAGE) flush
-	@${MAKE} superuser
-.PHONY: resetdb
+oidc-test: ## open OIDC test client in browser
+	@$(MAKE) down
+	@$(MAKE) run
+	python -mwebbrowser -n https://oidc-test-client.traefik.me
+.PHONY: oidc-test
 
 env.d/development/common:
 	cp -n env.d/development/common.dist env.d/development/common
 
-env.d/development/postgresql:
-	cp -n env.d/development/postgresql.dist env.d/development/postgresql
-
-env.d/development/kc_postgresql:
-	cp -n env.d/development/kc_postgresql.dist env.d/development/kc_postgresql
-
-# -- Internationalization
-
-env.d/development/crowdin:
-	cp -n env.d/development/crowdin.dist env.d/development/crowdin
-
-crowdin-download: ## Download translated message from Crowdin
-	@$(COMPOSE_RUN_CROWDIN) download -c crowdin/config.yml
-.PHONY: crowdin-download
-
-crowdin-download-sources: ## Download sources from Crowdin
-	@$(COMPOSE_RUN_CROWDIN) download sources -c crowdin/config.yml
-.PHONY: crowdin-download-sources
-
-crowdin-upload: ## Upload source translations to Crowdin
-	@$(COMPOSE_RUN_CROWDIN) upload sources -c crowdin/config.yml
-.PHONY: crowdin-upload
-
-i18n-compile: ## compile all translations
-i18n-compile: \
-	back-i18n-compile
-.PHONY: i18n-compile
-
-i18n-generate: ## create the .pot files and extract frontend messages
-i18n-generate: \
-	back-i18n-generate
-.PHONY: i18n-generate
-
-i18n-download-and-compile: ## download all translated messages and compile them to be used by all applications
-i18n-download-and-compile: \
-  crowdin-download \
-  i18n-compile
-.PHONY: i18n-download-and-compile
-
-i18n-generate-and-upload: ## generate source translations for all applications and upload them to Crowdin
-i18n-generate-and-upload: \
-  i18n-generate \
-  crowdin-upload
-.PHONY: i18n-generate-and-upload
+env.d/development/satosa:
+	openssl req -quiet -batch -x509 -nodes -days 3650 -newkey rsa:2048 \
+	  -subj "/CN=satosa.traefik.me" -out - -keyout - \
+	  | awk '/BEGIN PRIVATE/,/END PRIVATE/{privkey=privkey $$0 "\n"} \
+	         /BEGIN CERTIFICATE/,/END CERTIFICATE/{cert=cert $$0 "\n"} \
+	         END { \
+	           printf "SAML2_BACKEND_KEY=\"%s\"\n", privkey; \
+	           printf "SAML2_BACKEND_CERT=\"%s\"\n", cert; \
+	         }' > $@
+	echo "OIDC_FRONTEND_KEY=\"$$(openssl genrsa 2048)\"" >> $@
+	echo "STATE_ENCRYPTION_KEY=$$(openssl rand -hex 32)" >> $@
 
 # -- Misc
 clean: ## restore repository state as it was freshly cloned

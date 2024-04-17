@@ -47,12 +47,6 @@ env.d/terraform
 # npm
 node_modules
 
-# Mails
-src/backend/core/templates/mail/
-
-# Typescript client
-src/frontend/tsclient
-
 # Swagger
 **/swagger.json
 
@@ -70,9 +64,6 @@ src/frontend/tsclient
 .pytest_cache
 db.sqlite3
 .mypy_cache
-
-# Site media
-/data/
 
 # IDEs
 .idea/

@@ -11,7 +11,7 @@ venv
 **/.DS_Store
 
 # Docker
-docker compose.*
+docker-compose.*
 env.d
 
 # Docs
@@ -20,7 +20,6 @@ docs
 *.log
 
 # Development/test cache & configurations
-data
 .cache
 .circleci
 .git

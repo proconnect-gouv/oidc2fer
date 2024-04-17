@@ -1,6 +1,5 @@
-# Gunicorn-django settings
 bind = ["0.0.0.0:8000"]
-name = "oidc2fer"
+name = "satosa"
 python_path = "/app"
 
 # Run
