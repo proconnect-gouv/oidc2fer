@@ -28,10 +28,10 @@ The easiest way to start working on the project is to use GNU Make:
 $ make bootstrap
 ```
 
-This command builds the `app` container, installs dependencies, performs
-database migrations and compile translations. It's a good idea to use this
-command each time you are pulling code from the project repository to avoid
-dependency-related or migration-related issues.
+This command builds the `app-dev` container, installs dependencies, and sets up
+the development services.  It's a good idea to use this command each time
+you are pulling code from the project repository to avoid dependency-related or
+migration-related issues.
 
 Your Docker services should now be up and running 🎉
 

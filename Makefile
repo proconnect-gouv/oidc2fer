@@ -137,7 +137,16 @@ env.d/development/common:
 	cp -n env.d/development/common.dist env.d/development/common
 
 env.d/development/satosa:
-	cp -n env.d/development/satosa.dist env.d/development/satosa
+	openssl req -quiet -batch -x509 -nodes -days 3650 -newkey rsa:2048 \
+	  -subj "/CN=satosa.traefik.me" -out - -keyout - \
+	  | awk '/BEGIN PRIVATE/,/END PRIVATE/{privkey=privkey $$0 "\n"} \
+	         /BEGIN CERTIFICATE/,/END CERTIFICATE/{cert=cert $$0 "\n"} \
+	         END { \
+	           printf "SAML2_BACKEND_KEY=\"%s\"\n", privkey; \
+	           printf "SAML2_BACKEND_CERT=\"%s\"\n", cert; \
+	         }' > $@
+	echo "OIDC_FRONTEND_KEY=\"$$(openssl genrsa 2048)\"" >> $@
+	echo "STATE_ENCRYPTION_KEY=$$(openssl rand -hex 32)" >> $@
 
 # -- Misc
 clean: ## restore repository state as it was freshly cloned
