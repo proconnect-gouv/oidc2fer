@@ -46,6 +46,14 @@ default: help
 
 # -- Project
 
+create-dev-certs: ## Create self-signed HTTPS certificates for development
+create-dev-certs:
+	rm -rf env.d/development/certs
+	mkdir -p env.d/development/certs
+	cp "$$(mkcert --CAROOT)/rootCA.pem" env.d/development/certs/mkcert-root-ca.pem
+	mkcert -key-file env.d/development/certs/key.pem -cert-file env.d/development/certs/cert.pem *.traefik.me
+.PHONY: create-dev-certs
+
 create-env-files: ## Copy the dist env files to env files
 create-env-files: \
 	env.d/development/common \
@@ -54,6 +62,7 @@ create-env-files: \
 
 bootstrap: ## Prepare Docker images for the project
 bootstrap: \
+	create-dev-certs \
 	create-env-files \
 	build \
 	run
@@ -72,9 +81,8 @@ logs: ## display app-dev logs (follow mode)
 	@$(COMPOSE) logs -f app-dev
 .PHONY: logs
 
-run: ## start the wsgi (production) and development server
-	@$(COMPOSE) up --force-recreate -d nginx
-	@$(COMPOSE) up --force-recreate -d app-dev
+run: ## start the development servers
+	@$(COMPOSE) up --force-recreate --wait -d nginx app-dev oidc-test-client
 .PHONY: run
 
 status: ## an alias for "docker compose ps"
@@ -119,8 +127,16 @@ test-back: ## run back-end tests
 	bin/pytest $${args:-${1}}
 .PHONY: test-back
 
+oidc-test: ## open OIDC test client in browser
+	@$(MAKE) down
+	@$(MAKE) run
+	python -mwebbrowser -n https://oidc-test-client.traefik.me
+.PHONY: oidc-test
+
 env.d/development/common:
 	cp -n env.d/development/common.dist env.d/development/common
+
+env.d/development/satosa:
 	cp -n env.d/development/satosa.dist env.d/development/satosa
 
 # -- Misc

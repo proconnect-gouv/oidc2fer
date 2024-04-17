@@ -8,7 +8,8 @@ services:
     user: ${DOCKER_USER:-1000}
     image: oidc2fer:development
     environment:
-      - PYLINTHOME=/app/.pylint.d
+      PYLINTHOME: /app/.pylint.d
+      BASE_URL: https://satosa.traefik.me
     env_file:
       - env.d/development/common
       - env.d/development/satosa
@@ -27,10 +28,36 @@ services:
       - env.d/development/common
       - env.d/development/satosa
 
+  oidc-test-client:
+    image: ghcr.io/beryju/oidc-test-client
+    depends_on:
+      - nginx # nginx must be up to override satosa.traefik.me resolution
+      - app-dev
+    volumes:
+      - ./env.d/development/certs/mkcert-root-ca.pem:/usr/local/share/ca-certificates/mkcert-root-ca.crt
+    # - run update-ca-certificates to make mkcert certificates valid
+    # - add startup delay because IDP must be available on boot
+    entrypoint: /bin/bash -c 'update-ca-certificates && sleep 1; exec /oidc-test-client'
+    environment:
+      OIDC_ROOT_URL: https://oidc-test-client.traefik.me
+      OIDC_PROVIDER: https://satosa.traefik.me
+      OIDC_CLIENT_ID: oidc-test-client
+      OIDC_CLIENT_SECRET: oidc-test-secret
+      OIDC_DO_INTROSPECTION: false
+      OIDC_DO_REFRESH: false
+      OIDC_DO_USER_INFO: true
+
   nginx:
     image: nginx:1.25
     ports:
+      - "443:443"
       - "8081:8081"
-      - "8082:8082"
     volumes:
       - ./docker/files/etc/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./env.d/development/certs:/etc/nginx/certs:ro
+    networks:
+      default:
+        aliases:
+          # expose proxy internally as the public names to make internal HTTPS work
+          - satosa.traefik.me
+          - oidc-test-client.traefik.me
