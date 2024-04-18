@@ -1,5 +1,8 @@
 creation_rules:
-  # Here we have
-  # - Jacques key-id: age15fyxdwmg5mvldtqqus87xspuws2u0cpvwheehrtvkexj4tnsqqysw6re2x
-  - age:
-      age15fyxdwmg5mvldtqqus87xspuws2u0cpvwheehrtvkexj4tnsqqysw6re2x,
+  # Using a single-key group to be able to use per-key comments,
+  # see https://github.com/getsops/sops/issues/845#issuecomment-1364109772
+  - key_groups:
+    - age:
+      - age15fyxdwmg5mvldtqqus87xspuws2u0cpvwheehrtvkexj4tnsqqysw6re2x # Jacques
+      - age1h7d5y4w370whuawk5jxz8zv320u766mzhvlg2n6gh6hxvqmxg4psfpr03e # Jonathan
+      - age1nma4n6pxaywl39cndnu852vx0xs0vh5stcc3qtasdt89u4dqrussvjk5fj # github-repo
