@@ -1,0 +1,33 @@
+image:
+  repository: lasuite/oidc2fer
+  pullPolicy: Always
+  tag: "main"
+
+satosa:
+  replicas: 1
+  envVars:
+    BASE_URL: https://oidc2fer-staging.beta.numerique.gouv.fr
+    SAML2_BACKEND_CERT: {{ .Values.SAML2_BACKEND_CERT | toYaml | indent 8 }}
+    SAML2_BACKEND_KEY: {{ .Values.SAML2_BACKEND_KEY | toYaml | indent 8 }}
+    OIDC_FRONTEND_KEY: {{ .Values.OIDC_FRONTEND_KEY | toYaml | indent 8 }}
+    STATE_ENCRYPTION_KEY: "{{ .Values.STATE_ENCRYPTION_KEY }}"
+    CLIENT_DB_JSON: |-
+      {
+        "oidc-test-client": {
+          "response_types": [
+            "id_token",
+            "code"
+          ],
+          "redirect_uris": [
+            "https://oidc-test-client.traefik.me/auth/callback"
+          ],
+          "client_secret": "oidc-test-secret"
+        }
+      }
+
+ingress:
+  enabled: true
+  host: oidc2fer-staging.beta.numerique.gouv.fr
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod

@@ -1,0 +1,126 @@
+# Default values for oidc2fer.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+## @section General configuration
+
+## @param image.repository Repository to use to pull oidc2fer's container image
+## @param image.tag oidc2fer's container tag
+## @param image.pullPolicy Container image pull policy
+## @extra image.credentials.username Username for container registry authentication
+## @extra image.credentials.password Password for container registry authentication
+## @extra image.credentials.registry Registry url for which the credentials are specified
+## @extra image.credentials.name Name of the generated secret for imagePullSecrets
+image:
+  repository: lasuite/oidc2fer
+  pullPolicy: IfNotPresent
+  tag: "main"
+
+## @param nameOverride Override the chart name
+## @param fullnameOverride Override the full application name
+nameOverride: ""
+fullnameOverride: ""
+
+## @skip commonEnvVars
+commonEnvVars: &commonEnvVars
+  <<: []
+
+## @param ingress.enabled whether to enable the Ingress or not
+## @param ingress.className IngressClass to use for the Ingress
+## @param ingress.host Host for the Ingress
+## @param ingress.path Path to use for the Ingress
+ingress:
+  enabled: false
+  className: null
+  host: oidc2fer.example.com
+  path: /
+  ## @param ingress.hosts Additional host to configure for the Ingress
+  hosts: []
+  #  - chart-example.local
+  ## @param ingress.tls.enabled Weather to enable TLS for the Ingress
+  ## @skip ingress.tls.additional
+  ## @extra ingress.tls.additional[].secretName Secret name for additional TLS config
+  ## @extra ingress.tls.additional[].hosts[] Hosts for additional TLS config
+  tls:
+    enabled: true
+    additional: []
+
+  ## @param ingress.customBackends Add custom backends to ingress
+  customBackends: []
+
+## @section satosa
+
+satosa:
+
+  ## @param satosa.command Override the satosa container command
+  command: []
+
+  ## @param satosa.args Override the satosa container args
+  args: []
+
+  ## @param satosa.replicas Amount of satosa replicas
+  replicas: 3
+
+  ## @param satosa.shareProcessNamespace Enable share process namespace between containers
+  shareProcessNamespace: false
+
+  ## @param satosa.sidecars Add sidecars containers to satosa deployment
+  sidecars: []
+
+  ## @param satosa.securityContext Configure satosa Pod security context
+  securityContext: null
+
+  ## @param satosa.envVars Configure satosa container environment variables
+  ## @extra satosa.envVars.BY_VALUE Example environment variable by setting value directly
+  ## @extra satosa.envVars.FROM_CONFIGMAP.configMapKeyRef.name Name of a ConfigMap when configuring env vars from a ConfigMap
+  ## @extra satosa.envVars.FROM_CONFIGMAP.configMapKeyRef.key Key within a ConfigMap when configuring env vars from a ConfigMap
+  ## @extra satosa.envVars.FROM_SECRET.secretKeyRef.name Name of a Secret when configuring env vars from a Secret
+  ## @extra satosa.envVars.FROM_SECRET.secretKeyRef.key Key within a Secret when configuring env vars from a Secret
+  ## @skip satosa.envVars
+  envVars:
+    <<: *commonEnvVars
+
+  ## @param satosa.podAnnotations Annotations to add to the satosa Pod
+  podAnnotations: {}
+
+  ## @param satosa.service.type satosa Service type
+  ## @param satosa.service.port satosa Service listening port
+  ## @param satosa.service.targetPort satosa container listening port
+  ## @param satosa.service.annotations Annotations to add to the satosa Service
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 8000
+    annotations: {}
+
+  ## @param satosa.probes.liveness.path [nullable] Configure path for satosa HTTP liveness probe
+  ## @param satosa.probes.liveness.targetPort [nullable] Configure port for satosa HTTP liveness probe
+  ## @param satosa.probes.liveness.initialDelaySeconds [nullable] Configure initial delay for satosa liveness probe
+  ## @param satosa.probes.liveness.initialDelaySeconds [nullable] Configure timeout for satosa liveness probe
+  ## @param satosa.probes.startup.path [nullable] Configure path for satosa HTTP startup probe
+  ## @param satosa.probes.startup.targetPort [nullable] Configure port for satosa HTTP startup probe
+  ## @param satosa.probes.startup.initialDelaySeconds [nullable] Configure initial delay for satosa startup probe
+  ## @param satosa.probes.startup.initialDelaySeconds [nullable] Configure timeout for satosa startup probe
+  ## @param satosa.probes.readiness.path [nullable] Configure path for satosa HTTP readiness probe
+  ## @param satosa.probes.readiness.targetPort [nullable] Configure port for satosa HTTP readiness probe
+  ## @param satosa.probes.readiness.initialDelaySeconds [nullable] Configure initial delay for satosa readiness probe
+  ## @param satosa.probes.readiness.initialDelaySeconds [nullable] Configure timeout for satosa readiness probe
+  probes: {}
+    #liveness:
+    #  path: /__heartbeat__
+    #  initialDelaySeconds: 10
+    #readiness:
+    #  path: /__lbheartbeat__
+    #  initialDelaySeconds: 10
+
+  ## @param satosa.resources Resource requirements for the satosa container
+  resources: {}
+
+  ## @param satosa.nodeSelector Node selector for the satosa Pod
+  nodeSelector: {}
+
+  ## @param satosa.tolerations Tolerations for the satosa Pod
+  tolerations: []
+
+  ## @param satosa.affinity Affinity for the satosa Pod
+  affinity: {}

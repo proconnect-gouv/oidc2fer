@@ -7,5 +7,6 @@ and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- add Helm chart for deployment
 - provide Docker images on https://hub.docker.com/r/lasuite/oidc2fer
 - install SATOSA
