@@ -1,0 +1,21 @@
+{{- $envVars := include "oidc2fer.common.env" (list . .Values.satosa) -}}
+{{- $fullName := include "oidc2fer.satosa.fullname" . -}}
+{{- $component := "satosa" -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullName }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "oidc2fer.common.labels" (list . $component) | nindent 4 }}
+  annotations:
+    {{- toYaml $.Values.satosa.service.annotations | nindent 4 }}
+spec:
+  type: {{ .Values.satosa.service.type }}
+  ports:
+    - port: {{ .Values.satosa.service.port }}
+      targetPort: {{ .Values.satosa.service.targetPort }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "oidc2fer.common.selectorLabels" (list . $component) | nindent 4 }}

@@ -1,0 +1,84 @@
+{{- $envVars := include "oidc2fer.common.env" (list . .Values.satosa) -}}
+{{- $fullName := include "oidc2fer.satosa.fullname" . -}}
+{{- $component := "satosa" -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullName }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "oidc2fer.common.labels" (list . $component) | nindent 4 }}
+spec:
+  replicas: {{ .Values.satosa.replicas }}
+  selector:
+    matchLabels:
+      {{- include "oidc2fer.common.selectorLabels" (list . $component) | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        {{- with .Values.satosa.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "oidc2fer.common.selectorLabels" (list . $component) | nindent 8 }}
+    spec:
+      {{- if $.Values.image.credentials }}
+      imagePullSecrets:
+        - name: {{ include "oidc2fer.secret.dockerconfigjson.name" (dict "fullname" (include "oidc2fer.fullname" .) "imageCredentials" $.Values.image.credentials) }}
+      {{- end}}
+      shareProcessNamespace: {{ .Values.satosa.shareProcessNamespace }}
+      containers:
+        {{- with .Values.satosa.sidecars }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        - name: {{ .Chart.Name }}
+          image: "{{ (.Values.satosa.image | default dict).repository | default .Values.image.repository }}:{{ (.Values.satosa.image | default dict).tag | default .Values.image.tag }}"
+          imagePullPolicy: {{ (.Values.satosa.image | default dict).pullPolicy | default .Values.image.pullPolicy }}
+          {{- with .Values.satosa.command }}
+          command:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.satosa.args }}
+          args:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          env:
+            {{- if $envVars}}
+            {{- $envVars | indent 12 }}
+            {{- end }}
+          {{- with .Values.satosa.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.satosa.service.targetPort }}
+              protocol: TCP
+          {{- if .Values.satosa.probes.liveness }}
+          livenessProbe:
+            {{- include "oidc2fer.probes.abstract" (merge .Values.satosa.probes.liveness (dict "targetPort" .Values.satosa.service.targetPort )) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.satosa.probes.readiness }}
+          readinessProbe:
+            {{- include "oidc2fer.probes.abstract" (merge .Values.satosa.probes.readiness (dict "targetPort" .Values.satosa.service.targetPort )) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.satosa.probes.startup }}
+          startupProbe:
+            {{- include "oidc2fer.probes.abstract" (merge .Values.satosa.probes.startup (dict "targetPort" .Values.satosa.service.targetPort )) | nindent 12 }}
+          {{- end }}
+          {{- with .Values.satosa.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.satosa.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.satosa.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.satosa.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
