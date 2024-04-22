@@ -11,19 +11,7 @@ satosa:
     SAML2_BACKEND_KEY: {{ .Values.SAML2_BACKEND_KEY | toYaml | indent 8 }}
     OIDC_FRONTEND_KEY: {{ .Values.OIDC_FRONTEND_KEY | toYaml | indent 8 }}
     STATE_ENCRYPTION_KEY: "{{ .Values.STATE_ENCRYPTION_KEY }}"
-    CLIENT_DB_JSON: |-
-      {
-        "oidc-test-client": {
-          "response_types": [
-            "id_token",
-            "code"
-          ],
-          "redirect_uris": [
-            "https://oidc-test-client.traefik.me/auth/callback"
-          ],
-          "client_secret": "oidc-test-secret"
-        }
-      }
+    CLIENT_DB_JSON: {{ .Values.CLIENT_DB_JSON | toYaml | indent 8 }}
 
 ingress:
   enabled: true
