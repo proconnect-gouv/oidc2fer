@@ -9,6 +9,8 @@ extension-pkg-whitelist=
 # paths.
 ignore=migrations
 
+recursive=yes
+
 # Add files or directories matching the regex patterns to the blacklist. The
 # regex matches against base names, not paths.
 ignore-patterns=
@@ -62,7 +64,10 @@ disable=bad-inline-option,
         no-self-use,
         raw-checker-failed,
         suppressed-message,
-        useless-suppression
+        useless-suppression,
+        missing-module-docstring,
+        missing-class-docstring,
+        missing-function-docstring
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option

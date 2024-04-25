@@ -87,7 +87,6 @@ jobs:
     defaults:
       run:
         working-directory: src/satosa
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2

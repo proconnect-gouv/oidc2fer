@@ -13,6 +13,7 @@ FRONTEND_MODULES:
   - plugins/frontends/ping_frontend.yaml
 MICRO_SERVICES:
   - plugins/microservices/static_attributes.yaml
+  - plugins/microservices/attribute_processor.yaml
 LOGGING:
   version: 1
   formatters:

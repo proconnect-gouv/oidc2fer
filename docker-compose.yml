@@ -42,11 +42,13 @@ services:
     environment:
       OIDC_ROOT_URL: https://oidc-test-client.traefik.me
       OIDC_PROVIDER: https://satosa.traefik.me
+      #OIDC_PROVIDER: https://oidc2fer-staging.beta.numerique.gouv.fr
       OIDC_CLIENT_ID: oidc-test-client
       OIDC_CLIENT_SECRET: oidc-test-secret
       OIDC_DO_INTROSPECTION: false
       OIDC_DO_REFRESH: false
       OIDC_DO_USER_INFO: true
+      OIDC_SCOPES: openid,uid,given_name,usual_name,email
 
   nginx:
     image: nginx:1.25
