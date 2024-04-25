@@ -7,6 +7,7 @@ satosa:
   replicas: 1
   envVars:
     BASE_URL: https://oidc2fer-staging.beta.numerique.gouv.fr
+    GUNICORN_CMD_ARGS: --workers=1
     SAML2_BACKEND_CERT: {{ .Values.SAML2_BACKEND_CERT | toYaml | indent 8 }}
     SAML2_BACKEND_KEY: {{ .Values.SAML2_BACKEND_KEY | toYaml | indent 8 }}
     OIDC_FRONTEND_KEY: {{ .Values.OIDC_FRONTEND_KEY | toYaml | indent 8 }}

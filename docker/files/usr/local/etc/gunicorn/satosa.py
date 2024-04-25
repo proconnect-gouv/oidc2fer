@@ -5,7 +5,6 @@ python_path = "/app"
 # Run
 graceful_timeout = 90
 timeout = 90
-workers = 3
 
 # Logging
 # Using '-' for the access log file makes gunicorn log accesses to stdout
