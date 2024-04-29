@@ -10,6 +10,8 @@ satosa:
     GUNICORN_CMD_ARGS: --workers=3
     SAML2_BACKEND_CERT: {{ .Values.SAML2_BACKEND_CERT | toYaml | indent 8 }}
     SAML2_BACKEND_KEY: {{ .Values.SAML2_BACKEND_KEY | toYaml | indent 8 }}
+    SAML2_DISCOVERY_URL: https://discovery.renater.fr/test/
+    SAML2_METADATA_URL: https://pub.federation.renater.fr/metadata/test/preview/preview-idps-test-metadata.xml
     OIDC_FRONTEND_KEY: {{ .Values.OIDC_FRONTEND_KEY | toYaml | indent 8 }}
     OIDC_DB_URI:
       secretKeyRef:

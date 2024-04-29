@@ -28,6 +28,8 @@ services:
             "token_endpoint_auth_method": "client_secret_post"
           }
         }
+      SAML2_DISCOVERY_URL: https://discovery.renater.fr/test/
+      SAML2_METADATA_URL: https://pub.federation.renater.fr/metadata/test/preview/preview-idps-test-metadata.xml
     env_file:
       - env.d/development/common
       - env.d/development/satosa
