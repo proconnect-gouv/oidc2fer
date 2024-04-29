@@ -1,4 +1,24 @@
+repositories:
+- name: bitnami
+  url: registry-1.docker.io/bitnamicharts
+  oci: true
+
 releases:
+  - name: redis
+    installed: {{ eq .Environment.Name "dev" | toYaml }}
+    namespace: {{ .Namespace }}
+    chart: bitnami/redis
+    version: 18.19.2
+    values:
+      - auth:
+          password: pass
+        architecture: standalone
+
+  - name: extra
+    installed: {{ ne .Environment.Name "dev" | toYaml }}
+    namespace: {{ .Namespace }}
+    chart: ./extra
+
   - name: oidc2fer
     version: 0.0.1 # {{ .Values.version }}
     namespace: {{ .Namespace }}

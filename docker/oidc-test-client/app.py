@@ -28,7 +28,7 @@ app.config.update(
 
 client = Client(client_authn_method=CLIENT_AUTHN_METHOD)
 
-provider_info = client.provider_config("https://satosa.traefik.me")
+provider_info = client.provider_config(os.environ["OIDC_PROVIDER"])
 
 info = {
     "client_id": os.environ["OIDC_CLIENT_ID"],

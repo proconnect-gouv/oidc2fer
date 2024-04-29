@@ -10,6 +10,10 @@ services:
     environment:
       PYLINTHOME: /app/.pylint.d
       BASE_URL: https://satosa.traefik.me
+      GUNICORN_CMD_ARGS: --workers=2
+      TEST_E2E: 1
+      #TEST_E2E_AC: 1
+      OIDC_DB_URI: redis://redis/0
       CLIENT_DB_JSON: |
         {
           "oidc-test-client": {
@@ -29,6 +33,8 @@ services:
       - env.d/development/satosa
     volumes:
       - ./src/satosa:/app
+    depends_on:
+      - redis
 
   oidc-test-client:
     build: docker/oidc-test-client
@@ -51,10 +57,16 @@ services:
     environment:
       OIDC_ROOT_URL: https://oidc-test-client.traefik.me
       OIDC_PROVIDER: https://satosa.traefik.me
+      #OIDC_PROVIDER: https://oidc2fer.127.0.0.1.nip.io
       #OIDC_PROVIDER: https://oidc2fer-staging.beta.numerique.gouv.fr
       OIDC_CLIENT_ID: oidc-test-client
       OIDC_CLIENT_SECRET: oidc-test-secret
       OIDC_SCOPES: openid,uid,given_name,usual_name,email
+    extra_hosts:
+      - "oidc2fer.127.0.0.1.nip.io:host-gateway"
+
+  redis:
+    image: redis:7.2.4
 
   nginx:
     image: nginx:1.25

@@ -19,7 +19,7 @@ config:
   #
   # This configuration is optional.
   # By default, the in-memory storage is used.
-  # db_uri: mongodb://db.example.com
+  db_uri: !ENV OIDC_DB_URI
 
   # Where to store clients.
   #
@@ -43,7 +43,12 @@ config:
       - uid
       - given_name
       - usual_name
-    id_token_lifetime: 3600
+
+    # Set code/token lifetimes as short as possible
+    authorization_code_lifetime: 60
+    access_token_lifetime: 60
+    id_token_lifetime: 60
+
     extra_scopes:
       uid:
       - uid
