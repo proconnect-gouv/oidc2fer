@@ -13,4 +13,6 @@ docker_build(
     ]
 )
 
+watch_file('src/helm')
+
 k8s_yaml(local('cd src/helm && helmfile -n oidc2fer -e dev template .'))
