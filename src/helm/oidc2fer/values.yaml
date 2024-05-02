@@ -105,16 +105,22 @@ satosa:
   ## @param satosa.probes.readiness.targetPort [nullable] Configure port for satosa HTTP readiness probe
   ## @param satosa.probes.readiness.initialDelaySeconds [nullable] Configure initial delay for satosa readiness probe
   ## @param satosa.probes.readiness.initialDelaySeconds [nullable] Configure timeout for satosa readiness probe
-  probes: {}
-    #liveness:
-    #  path: /__heartbeat__
-    #  initialDelaySeconds: 10
+  probes:
+    liveness:
+      targetPost: 8000
+      path: /ping
+      initialDelaySeconds: 10
     #readiness:
     #  path: /__lbheartbeat__
     #  initialDelaySeconds: 10
 
   ## @param satosa.resources Resource requirements for the satosa container
-  resources: {}
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
 
   ## @param satosa.nodeSelector Node selector for the satosa Pod
   nodeSelector: {}
