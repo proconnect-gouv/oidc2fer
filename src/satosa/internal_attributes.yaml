@@ -22,8 +22,9 @@ attributes:
   acr:
     openid:
       - acr
+  eppn:
+    saml:
+      - eduPersonPrincipalName
   uid:
     openid:
       - uid
-    saml:
-      - eduPersonPrincipalName

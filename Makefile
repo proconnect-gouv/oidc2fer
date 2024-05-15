@@ -131,7 +131,13 @@ oidc-test: ## open OIDC test client in browser
 	@$(MAKE) down
 	@$(MAKE) run
 	python -mwebbrowser -n https://oidc-test-client.traefik.me
-.PHONY: oidc-test
+.phony: oidc-test
+
+e2e-test: ## automated end-to-end test in browser
+	@$(MAKE) down
+	@$(MAKE) run
+	TEST_E2E=1 pytest
+.phony: e2e-test
 
 env.d/development/common:
 	cp -n env.d/development/common.dist env.d/development/common

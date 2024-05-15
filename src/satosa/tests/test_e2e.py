@@ -2,7 +2,7 @@ import json
 import os
 
 import pytest
-from playwright.sync_api import Page, expect
+from playwright.sync_api import Browser, BrowserContext, Page, expect
 
 
 @pytest.fixture(scope="session")
@@ -22,17 +22,16 @@ def renater_wayf(page):
     page.get_by_role("button", name="Sélection").click()
 
 
-@pytest.mark.skipif(
-    "TEST_E2E" not in os.environ, reason="Depends on app running locally"
-)
-def test_oidc_to_renater(page: Page):
-    page.goto("https://oidc-test-client.traefik.me")
-    renater_wayf(page)
-    renater_test_idp(page)
+def oidc_to_renater(context: BrowserContext):
+    with context.new_page() as page:
+        page.goto("https://oidc-test-client.traefik.me")
+        renater_wayf(page)
+        renater_test_idp(page)
 
-    expect(page.locator("pre")).to_contain_text('"usual_name":"Dupont"')
-    text = page.inner_text("pre")
-    result = json.loads(text)
+        expect(page.locator("pre")).to_contain_text('"usual_name":"Dupont"')
+        text = page.inner_text("pre")
+        result = json.loads(text)
+
     id_token = result["access_token_response"]["id_token"]
     assert {"acr": "eidas1"}.items() <= id_token.items()
     userinfo = result["userinfo"]
@@ -42,6 +41,17 @@ def test_oidc_to_renater(page: Page):
         "uid": "etudiant1@test-renater.fr",
         "usual_name": "Dupont",
     }.items() <= userinfo.items()
+    return id_token
+
+
+@pytest.mark.skipif(
+    "TEST_E2E" not in os.environ, reason="Depends on app running locally"
+)
+def test_oidc_to_renater(browser: Browser):
+    id_token1 = oidc_to_renater(browser.new_context())
+    id_token2 = oidc_to_renater(browser.new_context())
+
+    assert id_token1["sub"] == id_token2["sub"]
 
 
 def agent_connect_login(page: Page):
@@ -51,20 +61,29 @@ def agent_connect_login(page: Page):
     page.get_by_test_id("interaction-connection-button").click()
 
 
+def agent_connect_to_renater(context: BrowserContext):
+    with context.new_page() as page:
+        agent_connect_login(page)
+        renater_wayf(page)
+        renater_test_idp(page)
+
+        expect(page.locator("body")).to_contain_text("jean.dupont@formation.renater.fr")
+        text = page.inner_text("#json")
+        result = json.loads(text)
+        assert {
+            "email": "jean.dupont@formation.renater.fr",
+            "given_name": "Jean",
+            "uid": "etudiant1@test-renater.fr",
+            "usual_name": "Dupont",
+        }.items() <= result.items()
+        return result
+
+
 @pytest.mark.skipif(
     "TEST_E2E_AC" not in os.environ, reason="Depends on staging deployment"
 )
-def test_agent_connect_to_renater(page: Page):
-    agent_connect_login(page)
-    renater_wayf(page)
-    renater_test_idp(page)
+def test_agent_connect_to_renater(browser: Browser):
+    result1 = agent_connect_to_renater(browser.new_context())
+    result2 = agent_connect_to_renater(browser.new_context())
 
-    expect(page.locator("body")).to_contain_text("jean.dupont@formation.renater.fr")
-    text = page.inner_text("#json")
-    result = json.loads(text)
-    assert {
-        "email": "jean.dupont@formation.renater.fr",
-        "given_name": "Jean",
-        "uid": "etudiant1@test-renater.fr",
-        "usual_name": "Dupont",
-    }.items() <= result.items()
+    assert result1["sub"] == result2["sub"]

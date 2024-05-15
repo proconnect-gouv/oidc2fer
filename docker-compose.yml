@@ -7,6 +7,7 @@ services:
         DOCKER_USER: ${DOCKER_USER:-1000}
     user: ${DOCKER_USER:-1000}
     image: oidc2fer:development
+    pull_policy: never
     environment:
       PYLINTHOME: /app/.pylint.d
       BASE_URL: https://satosa.traefik.me
