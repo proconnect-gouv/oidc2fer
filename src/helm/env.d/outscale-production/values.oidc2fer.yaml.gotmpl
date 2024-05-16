@@ -1,0 +1,29 @@
+image:
+  repository: lasuite/oidc2fer
+  pullPolicy: Always
+  tag: "v1.0.0"
+
+satosa:
+  replicas: 2
+  envVars:
+    BASE_URL: https://oidc2fer.beta.numerique.gouv.fr
+    GUNICORN_CMD_ARGS: --workers=3
+
+    SAML2_DISCOVERY_URL: https://discovery.renater.fr/renater
+    SAML2_METADATA_URL: https://pub.federation.renater.fr/metadata/renater/main/main-idps-renater-metadata.xml
+
+    STATE_ENCRYPTION_KEY: { secretKeyRef: { name: oidc2fer, key: STATE_ENCRYPTION_KEY } }
+    SAML2_BACKEND_CERT:   { secretKeyRef: { name: oidc2fer, key: SAML2_BACKEND_CERT   } }
+    SAML2_BACKEND_KEY:    { secretKeyRef: { name: oidc2fer, key: SAML2_BACKEND_KEY    } }
+    OIDC_FRONTEND_KEY:    { secretKeyRef: { name: oidc2fer, key: OIDC_FRONTEND_KEY    } }
+    CLIENT_DB_JSON:       { secretKeyRef: { name: oidc2fer, key: CLIENT_DB_JSON       } }
+
+    OIDC_DB_URI: { secretKeyRef: { name: redis.redis.libre.sh, key: url } }
+
+ingress:
+  enabled: true
+  host: oidc2fer.beta.numerique.gouv.fr
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/proxy-buffer-size: 128k

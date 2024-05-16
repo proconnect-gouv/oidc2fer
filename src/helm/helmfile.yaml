@@ -22,7 +22,7 @@ releases:
       - env.d/{{ .Environment.Name }}/secrets.enc.yaml
 
   - name: oidc2fer
-    version: 0.0.1 # {{ .Values.version }}
+    version: {{ .Values.version }}
     namespace: {{ .Namespace }}
     chart: ./oidc2fer
     values:
@@ -37,6 +37,11 @@ environments:
     secrets:
       - env.d/{{ .Environment.Name }}/secrets.enc.yaml
   staging:
+    values:
+      - version: 0.0.1
+    secrets:
+      - env.d/{{ .Environment.Name }}/secrets.enc.yaml
+  outscale-production:
     values:
       - version: 0.0.1
     secrets:
