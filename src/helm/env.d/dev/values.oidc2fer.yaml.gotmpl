@@ -7,6 +7,17 @@ satosa:
   replicas: 1
   envVars:
     BASE_URL: https://oidc2fer.127.0.0.1.nip.io
+    GUNICORN_CMD_ARGS: --workers=3
+
+    SAML2_DISCOVERY_URL: https://discovery.renater.fr/test/
+    SAML2_METADATA_URL: https://pub.federation.renater.fr/metadata/test/preview/preview-idps-test-metadata.xml
+
+    STATE_ENCRYPTION_KEY: { secretKeyRef: { name: oidc2fer, key: STATE_ENCRYPTION_KEY } }
+    SAML2_BACKEND_CERT:   { secretKeyRef: { name: oidc2fer, key: SAML2_BACKEND_CERT   } }
+    SAML2_BACKEND_KEY:    { secretKeyRef: { name: oidc2fer, key: SAML2_BACKEND_KEY    } }
+    OIDC_FRONTEND_KEY:    { secretKeyRef: { name: oidc2fer, key: OIDC_FRONTEND_KEY    } }
+
+    OIDC_DB_URI: "redis://:pass@redis-master:6379"
     CLIENT_DB_JSON: |-
       {
         "oidc-test-client": {
@@ -15,15 +26,13 @@ satosa:
             "code"
           ],
           "redirect_uris": [
-            "https://oidc-test-client.traefik.me:8443/auth/callback"
+            "https://oidc-test-client.traefik.me/redirect_uri",
+            "https://oidc-test-client.traefik.me:8443/redirect_uri"
           ],
-          "client_secret": "oidc-test-secret"
+          "client_secret": "oidc-test-secret",
+          "token_endpoint_auth_method": "client_secret_post"
         }
       }
-    SAML2_BACKEND_CERT: {{ .Values.SAML2_BACKEND_CERT | toYaml | indent 8 }}
-    SAML2_BACKEND_KEY: {{ .Values.SAML2_BACKEND_KEY | toYaml | indent 8 }}
-    OIDC_FRONTEND_KEY: {{ .Values.OIDC_FRONTEND_KEY | toYaml | indent 8 }}
-    STATE_ENCRYPTION_KEY: "{{ .Values.STATE_ENCRYPTION_KEY }}"
 
 ingress:
   enabled: true

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # The container user (see USER in the Dockerfile) is an un-privileged user that
 # does not exists and is not created during the build phase (see Dockerfile).
@@ -38,6 +38,12 @@ printenv SAML2_BACKEND_CERT > /tmp/backend.crt
 printenv SAML2_BACKEND_KEY > /tmp/backend.key
 printenv OIDC_FRONTEND_KEY > /tmp/frontend.key
 printenv CLIENT_DB_JSON > /tmp/client_db.json
+
+# Redis database number must be specified
+if [[ ! $OIDC_DB_URI =~ /[0-9]+$ ]]; then
+    echo "🐳(entrypoint) adding db id to OIDC_DB_URI"
+    export OIDC_DB_URI=$OIDC_DB_URI/0
+fi
 
 echo "🐳(entrypoint) running your command: ${*}"
 exec "$@"

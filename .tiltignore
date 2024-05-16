@@ -1,0 +1,2 @@
+# temporary secret files created by helmfile when decrypting secrets
+**/secret[0-9]*.yaml

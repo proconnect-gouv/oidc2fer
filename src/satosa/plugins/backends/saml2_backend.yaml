@@ -1,7 +1,7 @@
 module: satosa.backends.saml2.SAMLBackend
 name: Saml2
 config:
-  disco_srv: https://discovery.renater.fr/test/
+  disco_srv: !ENV SAML2_DISCOVERY_URL
   entityid_endpoint: true
   mirror_force_authn: 'no'
   memorize_idp: 'no'
@@ -22,7 +22,7 @@ config:
       # mdq:
       #   - url: https://mdq.federation.renater.fr
       remote:
-        - url: https://pub.federation.renater.fr/metadata/test/preview/preview-idps-test-metadata.xml
+        - url: !ENV SAML2_METADATA_URL
     entityid: <base_url>/<name>/proxy_saml2_backend.xml
     accepted_time_diff: 60
     allow_unknown_attributes: true
@@ -45,7 +45,7 @@ config:
         endpoints:
           assertion_consumer_service:
             - - <base_url>/<name>/acs/post
-              - urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST
+              - 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'
           discovery_response:
             - - <base_url>/<name>/disco
               - 'urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol'

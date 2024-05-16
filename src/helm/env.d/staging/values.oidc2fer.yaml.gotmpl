@@ -1,17 +1,24 @@
 image:
   repository: lasuite/oidc2fer
   pullPolicy: Always
-  tag: "main"
+  tag: "pr-8"
 
 satosa:
-  replicas: 1
+  replicas: 2
   envVars:
     BASE_URL: https://oidc2fer-staging.beta.numerique.gouv.fr
-    SAML2_BACKEND_CERT: {{ .Values.SAML2_BACKEND_CERT | toYaml | indent 8 }}
-    SAML2_BACKEND_KEY: {{ .Values.SAML2_BACKEND_KEY | toYaml | indent 8 }}
-    OIDC_FRONTEND_KEY: {{ .Values.OIDC_FRONTEND_KEY | toYaml | indent 8 }}
-    STATE_ENCRYPTION_KEY: "{{ .Values.STATE_ENCRYPTION_KEY }}"
-    CLIENT_DB_JSON: {{ .Values.CLIENT_DB_JSON | toYaml | indent 8 }}
+    GUNICORN_CMD_ARGS: --workers=3
+
+    SAML2_DISCOVERY_URL: https://discovery.renater.fr/test/
+    SAML2_METADATA_URL: https://pub.federation.renater.fr/metadata/test/preview/preview-idps-test-metadata.xml
+
+    STATE_ENCRYPTION_KEY: { secretKeyRef: { name: oidc2fer, key: STATE_ENCRYPTION_KEY } }
+    SAML2_BACKEND_CERT:   { secretKeyRef: { name: oidc2fer, key: SAML2_BACKEND_CERT   } }
+    SAML2_BACKEND_KEY:    { secretKeyRef: { name: oidc2fer, key: SAML2_BACKEND_KEY    } }
+    OIDC_FRONTEND_KEY:    { secretKeyRef: { name: oidc2fer, key: OIDC_FRONTEND_KEY    } }
+    CLIENT_DB_JSON:       { secretKeyRef: { name: oidc2fer, key: CLIENT_DB_JSON       } }
+
+    OIDC_DB_URI: { secretKeyRef: { name: redis.redis.libre.sh, key: url } }
 
 ingress:
   enabled: true

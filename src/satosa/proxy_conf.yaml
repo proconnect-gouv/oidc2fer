@@ -12,7 +12,9 @@ FRONTEND_MODULES:
   - plugins/frontends/openid_connect_frontend.yaml
   - plugins/frontends/ping_frontend.yaml
 MICRO_SERVICES:
+  - plugins/microservices/primary_identifier.yaml
   - plugins/microservices/static_attributes.yaml
+  - plugins/microservices/attribute_processor.yaml
 LOGGING:
   version: 1
   formatters:
