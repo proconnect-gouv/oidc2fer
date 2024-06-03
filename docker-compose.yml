@@ -36,6 +36,7 @@ services:
       - env.d/development/satosa
     volumes:
       - ./src/satosa:/app
+      - ./docker/files/usr/local/etc/gunicorn/satosa.py:/usr/local/etc/gunicorn/satosa.py
     depends_on:
       - redis
 
