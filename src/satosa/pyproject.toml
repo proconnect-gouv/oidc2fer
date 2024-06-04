@@ -26,6 +26,7 @@ dependencies = [
     "SATOSA==8.4.0",
     "gunicorn==22.0.0",
     "redis==5.0.4",
+    "JSON-log-formatter==1.0",
 ]
 
 [project.urls]
