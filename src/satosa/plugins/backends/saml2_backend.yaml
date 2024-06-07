@@ -23,7 +23,7 @@ config:
       #   - url: https://mdq.federation.renater.fr
       remote:
         - url: !ENV SAML2_METADATA_URL
-    entityid: <base_url>/<name>/proxy_saml2_backend.xml
+    entityid: !ENV SAML2_ENTITY_ID
     accepted_time_diff: 60
     allow_unknown_attributes: true
     service:

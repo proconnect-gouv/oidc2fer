@@ -13,6 +13,7 @@ satosa:
 
     SAML2_DISCOVERY_URL: https://discovery.renater.fr/renater
     SAML2_METADATA_URL: https://pub.federation.renater.fr/metadata/renater/main/main-idps-renater-metadata.xml
+    SAML2_ENTITY_ID:  https://renater.agentconnect.gouv.fr/Saml2/proxy_saml2_backend.xml
 
     STATE_ENCRYPTION_KEY: { secretKeyRef: { name: oidc2fer, key: STATE_ENCRYPTION_KEY } }
     SAML2_BACKEND_CERT:   { secretKeyRef: { name: oidc2fer, key: SAML2_BACKEND_CERT   } }
