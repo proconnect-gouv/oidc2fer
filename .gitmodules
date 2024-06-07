@@ -1,8 +1,3 @@
-[submodule "src/helm/secrets"]
-	path = src/helm/secrets
+[submodule "secrets"]
+	path = secrets
 	url = ../secrets
-	branch = main
-[submodule ".github/workflows/secrets"]
-	path = .github/workflows/secrets
-	url = ../secrets
-	branch = main

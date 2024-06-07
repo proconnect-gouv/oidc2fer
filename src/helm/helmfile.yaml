@@ -19,7 +19,7 @@ releases:
     namespace: {{ .Namespace }}
     chart: ./extra
     secrets:
-      - {{ ne .Environment.Name "dev" | ternary "secrets/numerique-gouv/oidc2fer/env" "env.d" }}/{{ .Environment.Name }}/secrets.enc.yaml
+      - env.d/{{ .Environment.Name }}/secrets.enc.yaml
 
   - name: oidc2fer
     version: {{ .Values.version }}
@@ -28,7 +28,7 @@ releases:
     values:
       - env.d/{{ .Environment.Name }}/values.oidc2fer.yaml.gotmpl
     secrets:
-      - {{ ne .Environment.Name "dev" | ternary "secrets/numerique-gouv/oidc2fer/env" "env.d" }}/{{ .Environment.Name }}/secrets.enc.yaml
+      - env.d/{{ .Environment.Name }}/secrets.enc.yaml
 
 environments:
   dev:
@@ -40,10 +40,10 @@ environments:
     values:
       - version: 0.0.1
     secrets:
-      - {{ ne .Environment.Name "dev" | ternary "secrets/numerique-gouv/oidc2fer/env" "env.d" }}/{{ .Environment.Name }}/secrets.enc.yaml
+      - env.d/{{ .Environment.Name }}/secrets.enc.yaml
   outscale-production:
     values:
       - version: 0.0.1
     secrets:
-      - {{ ne .Environment.Name "dev" | ternary "secrets/numerique-gouv/oidc2fer/env" "env.d" }}/{{ .Environment.Name }}/secrets.enc.yaml
+      - env.d/{{ .Environment.Name }}/secrets.enc.yaml
 

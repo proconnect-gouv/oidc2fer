@@ -42,7 +42,7 @@ jobs:
         name: Load sops secrets
         uses: rouja/actions-sops@main
         with:
-          secret-file: .github/workflows/secrets/numerique-gouv/oidc2fer/secrets.enc.env
+          secret-file: secrets/numerique-gouv/oidc2fer/secrets.enc.env
           age-key: ${{ secrets.SOPS_PRIVATE }}
       -
         name: Login to DockerHub
@@ -83,7 +83,7 @@ jobs:
         name: Load sops secrets
         uses: rouja/actions-sops@main
         with:
-          secret-file: .github/workflows/secrets/numerique-gouv/oidc2fer/secrets.enc.env
+          secret-file: secrets/numerique-gouv/oidc2fer/secrets.enc.env
           age-key: ${{ secrets.SOPS_PRIVATE }}
       -
         name: Call argocd github webhook
