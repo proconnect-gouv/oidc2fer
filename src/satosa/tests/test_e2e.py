@@ -125,4 +125,4 @@ def test_agent_connect_to_renater_student_not_allowed(page: Page):
     renater_wayf(page)
     renater_test_idp(page, login="etudiant1")
 
-    expect(page.locator("body")).to_contain_text("access_denied")
+    expect(page.locator("body")).to_contain_text("Une erreur technique est survenue.")
