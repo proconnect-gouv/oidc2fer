@@ -7,6 +7,7 @@ and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- check the scope of returned eduPersonPrincipalNames
 - require "employee" value in eduPersonAffiliation
 
 ## [1.0.1] - 2024-06-04

@@ -7,7 +7,7 @@ config:
     # names are the internal SATOSA names for the attributes as
     # defined in internal_attributes.yaml.
     ordered_identifier_candidates:
-        - attribute_names: [eppn]
+        - attribute_names: [eduPersonPrincipalName]
 
     # The internal SATOSA attribute into which to place the primary
     # identifier value once found from the above configured ordered

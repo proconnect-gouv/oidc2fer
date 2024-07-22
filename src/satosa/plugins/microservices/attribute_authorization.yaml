@@ -5,5 +5,12 @@ config:
   attribute_allow:
     default: # any requester (SP/RP)
       default: # any issuer (IdP/OP)
+        eduPersonPrincipalName:
+          # The eduPersonPrincipalName value may have been filtered by the
+          # AttributeFilter processor, if it did not match an expected scope
+          # for the IdP.
+          # We require it to be non-empty here, to avoid an unhandled error
+          # later in the PrimaryIdentifier processor.
+          - ".+"
         eduPersonAffiliation:
           - "^employee$"

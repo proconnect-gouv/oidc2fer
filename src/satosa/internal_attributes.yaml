@@ -22,7 +22,7 @@ attributes:
   acr:
     openid:
       - acr
-  eppn:
+  eduPersonPrincipalName:
     saml:
       - eduPersonPrincipalName
   eduPersonAffiliation:
