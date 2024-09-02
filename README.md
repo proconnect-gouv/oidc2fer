@@ -47,6 +47,13 @@ Finally, you can check all available Make rules using:
 $ make help
 ```
 
+## Creating a release
+
+1. Update `CHANGELOG.md` to change the `Unreleased` header to the new version
+number and date.
+2. Commit and push to `main`.
+3. Create a `vX.Y.Z` tag from `main` and push it.
+
 ## Contributing
 
 This project is intended to be community-driven, so please, do not hesitate to
