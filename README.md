@@ -61,6 +61,7 @@ number and date.
 2. Edit `image/tag` at the top of
    `src/helm/env.d/outscale-production/values.oidc2fer.yaml.gotmpl`.
 3. Commit and push to `main`.
+4. Update the `production` tag and push it.
 
 ## Contributing
 
