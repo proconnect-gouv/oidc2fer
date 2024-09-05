@@ -126,3 +126,11 @@ def test_agent_connect_to_renater_student_not_allowed(page: Page):
     renater_test_idp(page, login="etudiant1")
 
     expect(page.locator("body")).to_contain_text("Une erreur technique est survenue.")
+
+
+@pytest.mark.skipif(
+    "TEST_E2E" not in os.environ, reason="Depends on app running locally"
+)
+def test_serve_static_assets(page: Page):
+    page.goto("https://satosa.traefik.me/images/logo.svg")
+    expect(page.locator("svg")).to_be_visible()

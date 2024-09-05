@@ -38,7 +38,7 @@ RUN mkdir -p /usr/local/etc/gunicorn
 COPY docker/files/usr/local/etc/gunicorn/satosa.py /usr/local/etc/gunicorn/satosa.py
 
 # The default command runs gunicorn WSGI server in satosa's main module
-CMD ["gunicorn", "-c", "/usr/local/etc/gunicorn/satosa.py", "satosa.wsgi:app"]
+CMD ["gunicorn", "-c", "/usr/local/etc/gunicorn/satosa.py"]
 
 # ---- Development image ----
 FROM common as development
