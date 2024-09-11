@@ -63,6 +63,7 @@ class DefaultJSONFormatter(json_log_formatter.JSONFormatter):
 bind = ["0.0.0.0:8000"]
 name = "satosa"
 python_path = "/app"
+wsgi_app = "oidc2fer.wsgi:app"
 
 # Run
 graceful_timeout = 90
