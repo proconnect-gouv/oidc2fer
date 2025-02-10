@@ -52,6 +52,10 @@ ingress:
 
 satosa:
 
+  ## @param satosa.pdb.enabled Enable pdb on backend
+  pdb:
+    enabled: true
+
   ## @param satosa.command Override the satosa container command
   command: []
 
