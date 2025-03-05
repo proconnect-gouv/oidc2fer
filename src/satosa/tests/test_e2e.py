@@ -75,26 +75,26 @@ def test_oidc_to_renater_student_not_allowed(page: Page):
     expect(page.locator("pre")).to_contain_text('"error":"access_denied"')
 
 
-def agent_connect_login(page: Page, email):
+def pro_connect_login(page: Page, email):
     page.goto("https://fsa1v2.integ01.dev-agentconnect.fr/")
-    page.get_by_label("Connexion à AgentConnect").click()
+    page.get_by_role("button", name="S’identifier avec ProConnect").click()
     page.get_by_label("Email professionnel").fill(email)
     page.get_by_test_id("interaction-connection-button").click()
 
 
-def agent_connect_to_renater(
+def pro_connect_to_renater(
     page: Page,
     login="enseignant1",
     expected_email="georges.grospieds@formation.renater.fr",
     expected_given_name="Georges",
     expected_usual_name="Grospieds",
 ):
-    agent_connect_login(page, email=expected_email)
+    pro_connect_login(page, email=expected_email)
     renater_wayf(page)
     renater_test_idp(page, login=login)
 
     expect(page.locator("body")).to_contain_text(expected_email)
-    text = page.inner_text("#json")
+    text = page.inner_text("#userinfo")
     result = json.loads(text)
     assert {
         "uid": f"{login}@test-renater.fr",
@@ -106,22 +106,22 @@ def agent_connect_to_renater(
 
 
 @pytest.mark.skipif(
-    "TEST_E2E_AC" not in os.environ, reason="Depends on staging deployment"
+    "TEST_E2E_PC" not in os.environ, reason="Depends on staging deployment"
 )
-def test_agent_connect_to_renater_keeps_sub(browser: Browser):
+def test_pro_connect_to_renater_keeps_sub(browser: Browser):
     with browser.new_context().new_page() as page:
-        result1 = agent_connect_to_renater(page)
+        result1 = pro_connect_to_renater(page)
     with browser.new_context().new_page() as page:
-        result2 = agent_connect_to_renater(page)
+        result2 = pro_connect_to_renater(page)
 
     assert result1["sub"] == result2["sub"]
 
 
 @pytest.mark.skipif(
-    "TEST_E2E_AC" not in os.environ, reason="Depends on staging deployment"
+    "TEST_E2E_PC" not in os.environ, reason="Depends on staging deployment"
 )
-def test_agent_connect_to_renater_student_not_allowed(page: Page):
-    agent_connect_login(page, email="jean.dupont@formation.renater.fr")
+def test_pro_connect_to_renater_student_not_allowed(page: Page):
+    pro_connect_login(page, email="jean.dupont@formation.renater.fr")
     renater_wayf(page)
     renater_test_idp(page, login="etudiant1")
 

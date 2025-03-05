@@ -13,7 +13,7 @@ services:
       BASE_URL: https://satosa.traefik.me
       GUNICORN_CMD_ARGS: --workers=2
       TEST_E2E: 1
-      #TEST_E2E_AC: 1
+      #TEST_E2E_PC: 1
       OIDC_DB_URI: redis://redis/0
       CLIENT_DB_JSON: |
         {
