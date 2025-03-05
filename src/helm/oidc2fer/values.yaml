@@ -33,7 +33,9 @@ ingress:
   enabled: false
   className: null
   host: oidc2fer.example.com
-  path: /
+  paths:
+  - path: '/$|^/\.well-known/openid-configuration$|^/images/|^/Saml2/|^/OIDC/|^/ping$'
+    pathType: ImplementationSpecific # enables regex matching
   ## @param ingress.hosts Additional host to configure for the Ingress
   hosts: []
   #  - chart-example.local
@@ -47,6 +49,9 @@ ingress:
 
   ## @param ingress.customBackends Add custom backends to ingress
   customBackends: []
+
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
 
 ## @section satosa
 
