@@ -63,6 +63,13 @@ number and date.
 3. Commit and push to `main`.
 4. Update the `production` tag and push it.
 
+## Environment variables
+
+| variable | usage |
+| --- | --- |
+| `LOG_LEVEL` | Sets the log level for the root logger, i.e. the default. Defaults to `INFO`. |
+| `LOG_LEVELS` | A JSON object that can be used to set log levels for specific loggers, e.g. `{"satosa.backends.saml2": "DEBUG"}`. Defaults to `{}`. |
+
 ## Contributing
 
 This project is intended to be community-driven, so please, do not hesitate to

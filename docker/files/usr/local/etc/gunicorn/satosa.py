@@ -1,4 +1,5 @@
 import datetime
+import json
 import logging
 import os
 import sys
@@ -29,6 +30,8 @@ class RequestJSONFormatter(json_log_formatter.JSONFormatter):
             url += f"?{record.args['q']}"
 
         return {
+            "logger": record.name,
+            "level": record.levelname,
             "remote_ip": record.args["h"],
             "method": record.args["m"],
             "path": url,
@@ -37,7 +40,7 @@ class RequestJSONFormatter(json_log_formatter.JSONFormatter):
             "user_agent": record.args["a"],
             "referer": record.args["f"],
             "duration_in_ms": record.args["M"],
-            "poppid": record.process,
+            "pid": record.process,
         }
 
 
@@ -55,9 +58,21 @@ class DefaultJSONFormatter(json_log_formatter.JSONFormatter):
         payload: dict[str, str | int | float] = super().json_record(
             message, extra, record
         )
+        payload["logger"] = record.name
         payload["level"] = record.levelname
         payload["pid"] = record.process
         return payload
+
+
+class NoPingFilter(logging.Filter):
+    """
+    Filters out /ping requests from the access log.
+    """
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        return not( record.args.get("m", "") == "GET"
+                   and record.args.get("U", "") == "/ping"
+                   and str(record.args.get("s", "")) == "200" )
 
 
 bind = ["0.0.0.0:8000"]
@@ -75,6 +90,9 @@ accesslog = "-"
 # Using '-' for the error log file makes gunicorn log errors to stderr
 errorlog = "-"
 loglevel = os.environ.get("LOG_LEVEL", "INFO")
+
+loglevels_json = os.environ.get("LOG_LEVELS", "{}")
+loglevels = json.loads(loglevels_json)
 
 logconfig_dict = {
     "version": 1,
@@ -95,7 +113,24 @@ logconfig_dict = {
             "handlers": ["json_request"],
             "propagate": False,
             "qualname": "gunicorn.access",
+            "filters": [NoPingFilter()],
         },
+        "satosa.base": {
+            "level": "INFO",
+        },
+        "satosa.state": {
+            "level": "INFO",
+        },
+        "satosa.proxy_server": {
+            "level": "INFO",
+        },
+        "satosa.routing": {
+            "level": "INFO",
+        },
+        "satosa.frontends.ping": {
+            "level": "INFO",
+        },
+        **{k: {"level": v.upper()} for k, v in loglevels.items()},
     },
     "formatters": {
         "json_request": {

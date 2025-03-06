@@ -8,6 +8,7 @@ and this project adheres to
 
 ## Unreleased
 - add allowlist for URL paths to nginx ingress
+- allow customizing log levels per logger
 
 ## [1.0.4] - 2024-09-11
 - serve static files
