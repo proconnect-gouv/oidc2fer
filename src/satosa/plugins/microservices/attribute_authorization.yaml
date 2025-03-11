@@ -13,4 +13,8 @@ config:
           # later in the PrimaryIdentifier processor.
           - ".+"
         eduPersonAffiliation:
+          - "^faculty$"
+          - "^staff$"
           - "^employee$"
+          - "^researcher$"
+          - "^teacher$"
