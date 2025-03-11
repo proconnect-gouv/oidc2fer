@@ -8,6 +8,7 @@ and this project adheres to
 
 ## Unreleased
 - upgrade to SATOSA 8.5.1
+- allow faculty, staff, employee, researcher, teacher affiliations
 
 ## [1.0.5] - 2025-03-06
 - add allowlist for URL paths to nginx ingress
