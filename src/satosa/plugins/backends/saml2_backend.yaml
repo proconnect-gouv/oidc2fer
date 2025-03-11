@@ -3,11 +3,11 @@ name: Saml2
 config:
   disco_srv: !ENV SAML2_DISCOVERY_URL
   entityid_endpoint: true
-  mirror_force_authn: 'no'
-  memorize_idp: 'no'
-  use_memorized_idp_when_force_authn: 'no'
-  send_requester_id: 'no'
-  enable_metadata_reload: 'no'
+  mirror_force_authn: false
+  memorize_idp: false
+  use_memorized_idp_when_force_authn: false
+  send_requester_id: false
+  enable_metadata_reload: false
   acs_selection_strategy: prefer_matching_host
   sp_config:
     name: Passerelle OIDC vers FER
