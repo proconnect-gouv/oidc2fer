@@ -10,7 +10,7 @@ jobs:
   helmfile-lint:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/helmfile/helmfile:latest
+      image: ghcr.io/helmfile/helmfile:v0.171.0
     steps:
       -
         uses: numerique-gouv/action-helmfile-lint@main
