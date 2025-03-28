@@ -65,29 +65,9 @@ jobs:
     needs:
       - build-and-push
     steps:
-      -
-        uses: actions/create-github-app-token@v1
-        id: app-token
+      - uses: numerique-gouv/action-argocd-webhook-notification@main
+        id: notify
         with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: "oidc2fer,secrets"
-      -
-        name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          token: ${{ steps.app-token.outputs.token }}
-      -
-        name: Load sops secrets
-        uses: rouja/actions-sops@main
-        with:
-          secret-file: secrets/numerique-gouv/oidc2fer/secrets.enc.env
-          age-key: ${{ secrets.SOPS_PRIVATE }}
-      -
-        name: Call argocd github webhook
-        run: |
-          data='{"ref": "'$GITHUB_REF'","repository": {"html_url":"'$GITHUB_SERVER_URL'/'$GITHUB_REPOSITORY'"}}'
-          sig=$(echo -n ${data} | openssl dgst -sha1 -hmac ''${ARGOCD_WEBHOOK_SECRET}'' | awk '{print "X-Hub-Signature: sha1="$2}')
-          curl -X POST -H 'X-GitHub-Event:push' -H "Content-Type: application/json" -H "${sig}" --data "${data}" $ARGOCD_WEBHOOK_URL
+          deployment_repo_path: "${{ github.repository }}"
+          argocd_webhook_secret: "${{ secrets.ARGOCD_PREPROD_WEBHOOK_SECRET }}"
+          argocd_url: "${{ vars.ARGOCD_PREPROD_WEBHOOK_URL }}"
