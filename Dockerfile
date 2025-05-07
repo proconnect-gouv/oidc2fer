@@ -1,17 +1,11 @@
-# ---- base image to inherit from ----
-FROM python:3.11-slim-bookworm as common
+# ---- Development image ----
+FROM python:3.11-slim-bookworm AS development
 
 # Install xmlsec1 dependencies required for xmlsec (for SAML)
 # Needs to be kept before the `pip install`
 RUN apt-get update && \
     apt-get -y upgrade && \
-    apt-get install -y \
-        pkg-config \
-        gcc \
-        xmlsec1 \
-        libxml2-dev \
-        libxmlsec1-dev \
-        libxmlsec1-openssl && \
+    apt-get install --no-install-recommends -y xmlsec1 && \
     rm -rf /var/lib/apt/lists/*
 
 # We want the most up-to-date stable pip release
@@ -40,9 +34,6 @@ COPY docker/files/usr/local/etc/gunicorn/satosa.py /usr/local/etc/gunicorn/satos
 # The default command runs gunicorn WSGI server in satosa's main module
 CMD ["gunicorn", "-c", "/usr/local/etc/gunicorn/satosa.py"]
 
-# ---- Development image ----
-FROM common as development
-
 # Playwright browsers
 ENV PLAYWRIGHT_BROWSERS_PATH=/pw-browsers
 RUN pip install playwright
@@ -67,7 +58,37 @@ COPY ./src/satosa /app/
 USER ${DOCKER_USER}
 
 # ---- Production image (keep last so it is the default target) ----
-FROM common as production
+FROM python:3.11-alpine AS production
+
+# Install xmlsec (for SAML)
+# Needs to be kept before the `pip install`
+RUN apk add xmlsec bash
+
+# We want the most up-to-date stable pip release
+RUN pip install --upgrade pip
+
+ENV PYTHONUNBUFFERED=1
+
+# Give the "root" group the same permissions as the "root" user on /etc/passwd
+# to allow a user belonging to the root group to add new users; typically the
+# docker user (see entrypoint).
+RUN chmod g=u /etc/passwd
+
+# We wrap commands run in this container by the following entrypoint that
+# creates a user on-the-fly with the container user ID (see USER) and root group
+# ID.
+COPY ./docker/files/usr/local/bin/entrypoint /usr/local/bin/entrypoint
+ENTRYPOINT [ "/usr/local/bin/entrypoint" ]
+
+# Un-privileged user running the application
+ARG DOCKER_USER
+
+# Gunicorn
+RUN mkdir -p /usr/local/etc/gunicorn
+COPY docker/files/usr/local/etc/gunicorn/satosa.py /usr/local/etc/gunicorn/satosa.py
+
+# The default command runs gunicorn WSGI server in satosa's main module
+CMD ["gunicorn", "-c", "/usr/local/etc/gunicorn/satosa.py"]
 
 # Copy oidc2fer application (see .dockerignore)
 COPY ./src/satosa /app/
