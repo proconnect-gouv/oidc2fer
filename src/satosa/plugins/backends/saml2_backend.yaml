@@ -19,10 +19,9 @@ config:
       display_name: DINUM
       url: https://beta.gouv.fr/incubateurs/dinum_produits_interministeriels.html
     metadata:
-      # mdq:
-      #   - url: https://mdq.federation.renater.fr
-      remote:
-        - url: !ENV SAML2_METADATA_URL
+      mdq:
+        - url: !ENV SAML2_MDQ_URL
+          freshness_period: "P0Y0M0DT1H0M10S"
     entityid: !ENV SAML2_ENTITY_ID
     accepted_time_diff: 60
     allow_unknown_attributes: true
