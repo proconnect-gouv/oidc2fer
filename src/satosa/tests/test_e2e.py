@@ -20,6 +20,7 @@ def renater_test_idp(page, login):
 
 def renater_wayf(page):
     page.get_by_text("Veuillez sélectionner").click()
+    page.get_by_role("searchbox").fill("GIP RENATER - IdP de test")
     page.get_by_role("option", name="GIP RENATER - IdP de test", exact=True).click()
     page.get_by_role("button", name="Sélection").click()
 
