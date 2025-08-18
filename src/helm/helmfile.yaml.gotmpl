@@ -9,6 +9,11 @@ environments:
       - version: 0.0.1
     secrets:
       - env.d/{{ .Environment.Name }}/secrets.enc.yaml
+  cnb-staging:
+    values:
+      - version: 0.0.1
+    secrets:
+      - env.d/{{ .Environment.Name }}/secrets.enc.yaml
   outscale-production:
     values:
       - version: 0.0.1
