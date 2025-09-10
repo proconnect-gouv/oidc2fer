@@ -1,7 +1,6 @@
-name: Docker Hub Workflow
+name: 🐳 Build docker images
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - 'main'
@@ -14,42 +13,37 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     steps:
-      -
-        uses: actions/create-github-app-token@v1
-        id: app-token
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: "oidc2fer,secrets"
-      -
-        name: Checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          token: ${{ steps.app-token.outputs.token }}
-      -
-        name: Set up Docker Buildx
+
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      -
-        name: Docker meta
+
+      - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: lasuite/oidc2fer
-      -
-        name: Load sops secrets
-        uses: rouja/actions-sops@main
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=ref,event=pr
+            type=sha,prefix=sha-
+            # set latest tag for default branch
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Login to Github Container Registry
+        uses: docker/login-action@v3
         with:
-          secret-file: secrets/numerique-gouv/oidc2fer/secrets.enc.env
-          age-key: ${{ secrets.SOPS_PRIVATE }}
-      -
-        name: Login to DockerHub
-        run: echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
-      -
-        name: Build and push
-        uses: docker/build-push-action@v5
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ github.token }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
         with:
           context: .
           target: production
