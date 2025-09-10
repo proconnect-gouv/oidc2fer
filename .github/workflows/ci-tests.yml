@@ -1,4 +1,4 @@
-name: OIDC2FER Workflow
+name: 💚 CI Tests
 
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
         run: git log
       - name: Enforce absence of print statements in code
         run: |
-          ! git diff origin/${{ github.event.pull_request.base.ref }}..HEAD -- . ':(exclude)**/oidc2fer.yml' | grep "print("
+          ! git diff origin/${{ github.event.pull_request.base.ref }}..HEAD -- . ':(exclude).github/**' | grep "print("
       - name: Check absence of fixup commits
         run: |
           ! git log | grep 'fixup!'
@@ -43,7 +43,7 @@ jobs:
         with:
             fetch-depth: 0
       - name: Check that the CHANGELOG has been modified in the current branch
-        run: git whatchanged --name-only --pretty="" origin/${{ github.event.pull_request.base.ref }}..HEAD | grep CHANGELOG
+        run: git log --name-only --pretty="" origin/${{ github.event.pull_request.base.ref }}..HEAD | grep CHANGELOG
 
   lint-changelog:
     runs-on: ubuntu-latest
@@ -101,3 +101,37 @@ jobs:
           pip install --user .[dev]
       - name: Run tests
         run: ~/.local/bin/pytest
+
+  helmfile-lint:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/helmfile/helmfile:v0.171.0
+    steps:
+      -
+        uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+          owner: numerique-gouv
+          repositories: secrets
+      -
+        name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ steps.app-token.outputs.token }}
+      -
+        name: Helmfile lint
+        shell: bash
+        run: |
+          mkdir -p ~/.config/sops/age/
+          echo ${{ secrets.SOPS_PRIVATE }} > ~/.config/sops/age/keys.txt
+          set -e
+          HELMFILE=src/helm/helmfile.yaml
+          environments=$(awk '/environments:/ {flag=1; next} flag && NF {print} !NF {flag=0}' "$HELMFILE" | grep -E '^[[:space:]]{2}[a-zA-Z]+' | sed 's/^[[:space:]]*//;s/:.*//')
+          for env in $environments; do
+            echo "################### $env lint ###################"
+            helmfile -e $env -f src/helm/helmfile.yaml lint || exit 1
+            echo -e "\n"
+          done
