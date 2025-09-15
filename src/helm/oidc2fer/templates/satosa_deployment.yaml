@@ -38,6 +38,9 @@ spec:
           command:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- with .Values.satosa.workingDir }}
+          workingDir: {{ . | quote }}
+          {{- end }}
           {{- with .Values.satosa.args }}
           args:
             {{- toYaml . | nindent 12 }}
