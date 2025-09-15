@@ -5,6 +5,7 @@ image:
 
 satosa:
   replicas: 2
+  workingDir: /app/config/fer
   envVars:
     BASE_URL: https://oidc2fer-staging.beta.numerique.gouv.fr
     GUNICORN_CMD_ARGS: --workers=3
