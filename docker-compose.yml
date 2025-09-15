@@ -38,6 +38,7 @@ services:
     volumes:
       - ./src/satosa:/app
       - ./docker/files/usr/local/etc/gunicorn/satosa.py:/usr/local/etc/gunicorn/satosa.py
+    working_dir: /app/config/fer
     depends_on:
       - redis
 
