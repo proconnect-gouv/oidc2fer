@@ -2,13 +2,10 @@ from flask import Flask, jsonify, request, session
 from oic.oic import Client
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 from oic import rndstr
-from oic.oic.message import RegistrationResponse
+from oic.oic.message import Claims, ClaimsRequest, RegistrationResponse
 from oic.utils.http_util import Redirect
 from oic.oic.message import AuthorizationResponse
 import secrets
-import webbrowser
-import threading
-import time
 import logging
 import os
 
@@ -52,6 +49,7 @@ def index():
             "nonce": session["nonce"],
             "redirect_uri": client.registration_response["redirect_uris"][0],
             "state": session["state"],
+            "claims": ClaimsRequest(id_token=Claims(acr=None, amr=None)),
         }
     )
     login_url = auth_req.request(client.authorization_endpoint)
