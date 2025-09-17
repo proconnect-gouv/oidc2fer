@@ -30,6 +30,8 @@ releases:
       - auth:
           password: pass
         architecture: standalone
+        image:
+          repository: bitnamilegacy/redis
 
   - name: extra
     installed: {{ ne .Environment.Name "dev" | toYaml }}
