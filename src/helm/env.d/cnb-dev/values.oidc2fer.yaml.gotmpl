@@ -1,0 +1,44 @@
+image:
+  repository: localhost:5001/oidc2fer
+  pullPolicy: Always
+  tag: "latest"
+
+satosa:
+  replicas: 1
+  workingDir: /app/config/cnb
+  envVars:
+    BASE_URL: https://oidc2fer.127.0.0.1.nip.io
+    GUNICORN_CMD_ARGS: --workers=3
+
+    LOG_LEVEL: debug
+
+    SAML2_ENTITY_ID:  https://oidc2fer.127.0.0.1.nip.io/Saml2/proxy_saml2_backend.xml
+    SAML2_IDP_METADATA: { secretKeyRef: { name: oidc2fer, key: SAML2_IDP_METADATA } }
+
+    STATE_ENCRYPTION_KEY: { secretKeyRef: { name: oidc2fer, key: STATE_ENCRYPTION_KEY } }
+    SAML2_BACKEND_CERT:   { secretKeyRef: { name: oidc2fer, key: SAML2_BACKEND_CERT   } }
+    SAML2_BACKEND_KEY:    { secretKeyRef: { name: oidc2fer, key: SAML2_BACKEND_KEY    } }
+    OIDC_FRONTEND_KEY:    { secretKeyRef: { name: oidc2fer, key: OIDC_FRONTEND_KEY    } }
+
+    OIDC_DB_URI: "redis://:pass@redis-master:6379"
+    CLIENT_DB_JSON: |-
+      {
+        "oidc-test-client": {
+          "response_types": [
+            "id_token",
+            "code"
+          ],
+          "redirect_uris": [
+            "https://oidc-test-client.traefik.me/redirect_uri",
+            "https://oidc-test-client.traefik.me:8443/redirect_uri"
+          ],
+          "client_secret": "oidc-test-secret",
+          "token_endpoint_auth_method": "client_secret_post"
+        }
+      }
+
+ingress:
+  enabled: true
+  host: oidc2fer.127.0.0.1.nip.io
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-buffer-size: 128k
