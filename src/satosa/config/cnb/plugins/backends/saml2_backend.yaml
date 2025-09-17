@@ -1,0 +1,48 @@
+module: satosa.backends.saml2.SAMLBackend
+name: Saml2
+config:
+  entityid_endpoint: true
+  mirror_force_authn: false
+  memorize_idp: false
+  use_memorized_idp_when_force_authn: false
+  send_requester_id: false
+  enable_metadata_reload: false
+  acs_selection_strategy: prefer_matching_host
+  sp_config:
+    name: Passerelle ProConnect vers CNB
+    description: Passerelle ProConnect vers CNB
+    key_file: /tmp/backend.key
+    cert_file: /tmp/backend.crt
+    organization:
+      name: DINUM
+      display_name: DINUM
+      url: https://beta.gouv.fr/incubateurs/dinum_produits_interministeriels.html
+    metadata:
+      local:
+        - /tmp/idp_metadata.xml
+    entityid: !ENV SAML2_ENTITY_ID
+    accepted_time_diff: 60
+    allow_unknown_attributes: true
+    service:
+      sp:
+        ui_info:
+          display_name:
+            - lang: fr
+              text: Passerelle ProConnect vers CNB
+          logo:
+            text: https://beta.gouv.fr/img/incubators/logo_dinum.png
+            width: '200'
+            height: '200'
+        authn_requests_signed: true
+        want_response_signed: true
+        signing_algorithm: 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256'
+        allow_unsolicited: true
+        name_id_format:
+          - urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress
+          - urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified
+        endpoints:
+          assertion_consumer_service:
+            - - <base_url>/<name>/acs/post
+              - 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'
+
+        name_id_format_allow_create: true

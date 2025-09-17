@@ -1,0 +1,24 @@
+attributes:
+  givenname:
+    openid:
+      - given_name
+    saml:
+      - cnb_prenom
+  email:
+    openid:
+      - email
+    saml:
+      - cnb_email
+  usual_name:
+    openid:
+      - usual_name
+    saml:
+      - cnb_nom
+  acr:
+    openid:
+      - acr
+  uid:
+    openid:
+      - uid
+    saml:
+      - cnb_id
