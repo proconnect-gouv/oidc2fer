@@ -56,8 +56,3 @@ config:
       - given_name
       usual_name:
       - usual_name
-    extra_id_token_claims:
-      oidc-test-client:
-        - acr
-      agent-connect:
-        - acr
