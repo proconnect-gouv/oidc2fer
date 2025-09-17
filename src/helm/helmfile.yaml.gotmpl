@@ -4,6 +4,11 @@ environments:
       - version: 0.0.1
     secrets:
       - env.d/{{ .Environment.Name }}/secrets.enc.yaml
+  cnb-dev:
+    values:
+      - version: 0.0.1
+    secrets:
+      - env.d/{{ .Environment.Name }}/secrets.enc.yaml
   staging:
     values:
       - version: 0.0.1
@@ -27,7 +32,7 @@ repositories:
 
 releases:
   - name: redis
-    installed: {{ eq .Environment.Name "dev" | toYaml }}
+    installed: {{ or (eq .Environment.Name "dev") (eq .Environment.Name "cnb-dev") | toYaml }}
     namespace: {{ .Namespace }}
     chart: bitnami/redis
     version: 18.19.2
@@ -39,7 +44,7 @@ releases:
           repository: bitnamilegacy/redis
 
   - name: extra
-    installed: {{ ne .Environment.Name "dev" | toYaml }}
+    installed: {{ and (ne .Environment.Name "dev") (ne .Environment.Name "cnb-dev") | toYaml }}
     namespace: {{ .Namespace }}
     chart: ./extra
     secrets:
