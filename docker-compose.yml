@@ -44,19 +44,14 @@ services:
 
   oidc-test-client:
     build: docker/oidc-test-client
-    depends_on:
-      - nginx # nginx must be up to override satosa.traefik.me resolution
-      - app-dev
     stop_signal: SIGKILL
     volumes:
       - ./docker/oidc-test-client:/app
       - ./env.d/development/certs/mkcert-root-ca.pem:/usr/local/share/ca-certificates/mkcert-root-ca.crt
     # - run update-ca-certificates to make mkcert certificates valid
-    # - add startup delay because IDP must be available on boot
     entrypoint: |
       /bin/bash -c '
         cat /usr/local/share/ca-certificates/mkcert-root-ca.crt >> $(python -m certifi)
-        sleep 1
         cd /app
         exec python app.py
       '
