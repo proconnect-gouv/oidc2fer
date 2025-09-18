@@ -5,6 +5,7 @@ from oic import rndstr
 from oic.oic.message import Claims, ClaimsRequest, RegistrationResponse
 from oic.utils.http_util import Redirect
 from oic.oic.message import AuthorizationResponse
+from werkzeug.exceptions import InternalServerError
 import secrets
 import logging
 import os
@@ -23,21 +24,27 @@ app.config.update(
     }
 )
 
-client = Client(client_authn_method=CLIENT_AUTHN_METHOD)
 
-provider_info = client.provider_config(os.environ["OIDC_PROVIDER"])
+def create_client() -> Client:
+    client = Client(client_authn_method=CLIENT_AUTHN_METHOD)
 
-info = {
-    "client_id": os.environ["OIDC_CLIENT_ID"],
-    "client_secret": os.environ["OIDC_CLIENT_SECRET"],
-    "redirect_uris": [f"{os.environ['OIDC_ROOT_URL']}/redirect_uri"],
-}
-client_reg = RegistrationResponse(**info)
-client.store_registration_info(client_reg)
+    client.provider_config(os.environ["OIDC_PROVIDER"])
+
+    info = {
+        "client_id": os.environ["OIDC_CLIENT_ID"],
+        "client_secret": os.environ["OIDC_CLIENT_SECRET"],
+    }
+    client.store_registration_info(RegistrationResponse(**info))
+
+    client.redirect_uris = [f"{os.environ['OIDC_ROOT_URL']}/redirect_uri"]
+
+    return client
 
 
 @app.route("/")
 def index():
+    client = create_client()
+
     session["state"] = rndstr()
     session["nonce"] = rndstr()
 
@@ -47,7 +54,7 @@ def index():
             "response_type": "code",
             "scope": os.environ["OIDC_SCOPES"].split(","),
             "nonce": session["nonce"],
-            "redirect_uri": client.registration_response["redirect_uris"][0],
+            "redirect_uri": client.redirect_uris[0],
             "state": session["state"],
             "claims": ClaimsRequest(id_token=Claims(acr=None, amr=None)),
         }
@@ -59,6 +66,8 @@ def index():
 
 @app.route("/redirect_uri")
 def oidc_callback():
+    client = create_client()
+
     response = request.query_string.decode("utf-8")
     aresp = client.parse_response(
         AuthorizationResponse, info=response, sformat="urlencoded"
@@ -70,7 +79,6 @@ def oidc_callback():
         return jsonify(
             error_response=aresp.to_dict(),
         )
-
 
     code = aresp["code"]
     logging.info("got auth code=%s", code)
@@ -90,7 +98,20 @@ def oidc_callback():
     logging.info("got userinfo=%s", userinfo)
 
     return jsonify(
-        access_token_response=access_token_response.to_dict(), userinfo=userinfo.to_dict()
+        access_token_response=access_token_response.to_dict(),
+        userinfo=userinfo.to_dict(),
+    )
+
+
+@app.errorhandler(InternalServerError)
+def handle_server_exception(e):
+    exc = e.original_exception
+    import traceback
+
+    return (
+        f"""<h1>Internal Server Error</h1>
+        <pre>{"".join(traceback.format_exception(exc))}</pre>""",
+        500,
     )
 
 
@@ -98,6 +119,6 @@ def oidc_callback():
 def health():
     return "OK"
 
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
-

@@ -44,9 +44,6 @@ services:
 
   oidc-test-client:
     build: docker/oidc-test-client
-    depends_on:
-      - nginx # nginx must be up to override satosa.traefik.me resolution
-      - app-dev
     stop_signal: SIGKILL
     volumes:
       - ./docker/oidc-test-client:/app
