@@ -38,8 +38,7 @@ config:
         signing_algorithm: 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256'
         allow_unsolicited: true
         name_id_format:
-          - urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress
-          - urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified
+          - urn:oasis:names:tc:SAML:2.0:nameid-format:transient
         endpoints:
           assertion_consumer_service:
             - - <base_url>/<name>/acs/post
