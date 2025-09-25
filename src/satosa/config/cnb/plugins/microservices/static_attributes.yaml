@@ -3,3 +3,5 @@ name: AddAttributes
 config:
   static_attributes:
     acr: eidas1
+    # FIXME temporary hardcoded email for testing
+    email: ["test@cnb.avocat.fr"] # SATOSA wants this to be an array
