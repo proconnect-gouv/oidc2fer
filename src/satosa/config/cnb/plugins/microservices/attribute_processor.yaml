@@ -1,0 +1,12 @@
+module: satosa.micro_services.attribute_processor.AttributeProcessor
+name: AttributeProcessor
+config:
+  process:
+  # Internally SATOSA represents most attributes as lists of strings.
+  # The SATOSA OIDC frontend automatically flattens standard OIDC attributes
+  # (like 'given_name' or 'email') to single strings when possible, but
+  # doesn't do that for custom attributes (like 'usual_name').
+  - attribute: usual_name
+    processors:
+    - module: oidc2fer.attribute_processors.flattening_processor
+      name: FlatteningProcessor

@@ -38,14 +38,12 @@ services:
     volumes:
       - ./src/satosa:/app
       - ./docker/files/usr/local/etc/gunicorn/satosa.py:/usr/local/etc/gunicorn/satosa.py
+    working_dir: /app/config/fer
     depends_on:
       - redis
 
   oidc-test-client:
     build: docker/oidc-test-client
-    depends_on:
-      - nginx # nginx must be up to override satosa.traefik.me resolution
-      - app-dev
     stop_signal: SIGKILL
     volumes:
       - ./docker/oidc-test-client:/app

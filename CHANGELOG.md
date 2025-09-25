@@ -7,6 +7,7 @@ and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+- add alternate configuration for connection to CNB (#33)
 - include ACR claim in ID token only if requested (#32)
 
 ## [1.0.8] - 2025-09-10
