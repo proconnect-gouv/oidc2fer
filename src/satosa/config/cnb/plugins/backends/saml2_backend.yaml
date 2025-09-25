@@ -34,7 +34,9 @@ config:
             width: '200'
             height: '200'
         authn_requests_signed: true
-        want_response_signed: true
+        want_response_signed: false
+        want_assertions_signed: false
+        want_assertions_or_response_signed: true
         signing_algorithm: 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256'
         allow_unsolicited: true
         name_id_format:
