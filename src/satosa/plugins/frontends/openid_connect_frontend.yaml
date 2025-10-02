@@ -43,6 +43,7 @@ config:
       - uid
       - given_name
       - usual_name
+      - siret
 
     # Set code/token lifetimes as short as possible
     authorization_code_lifetime: 60
@@ -56,3 +57,5 @@ config:
       - given_name
       usual_name:
       - usual_name
+      siret:
+      - siret

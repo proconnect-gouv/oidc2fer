@@ -24,6 +24,11 @@ satosa:
 
     OIDC_DB_URI: { secretKeyRef: { name: redis.redis.libre.sh, key: url } }
 
+    SIRET_MAP: |-
+      {
+          "https://test-idp.federation.renater.fr/idp/shibboleth": "12345678200010"
+      }
+
 ingress:
   enabled: true
   host: oidc2fer-staging.beta.numerique.gouv.fr
