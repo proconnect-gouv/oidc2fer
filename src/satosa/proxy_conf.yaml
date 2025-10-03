@@ -17,6 +17,7 @@ MICRO_SERVICES:
   - plugins/microservices/primary_identifier.yaml
   - plugins/microservices/static_attributes.yaml
   - plugins/microservices/attribute_processor.yaml
+  - plugins/microservices/siret_mapping.yaml
 LOGGING:
   # All the logging configuration is done in the Gunicorn config, this is just
   # here to avoid overwriting it with the default SATOSA config

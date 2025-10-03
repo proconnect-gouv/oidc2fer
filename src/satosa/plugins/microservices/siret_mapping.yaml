@@ -1,0 +1,5 @@
+module: oidc2fer.attribute_generators.EntityIdToSiretMapper
+name: EntityIdToSiretMapper
+config:
+  attribute: siret
+  mapping_json: !ENV SIRET_MAP
