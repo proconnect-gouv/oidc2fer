@@ -1,7 +1,7 @@
 image:
-  repository: lasuite/oidc2fer
+  repository: ghcr.io/proconnect-gouv/oidc2fer
   pullPolicy: Always
-  tag: "v1.0.6"
+  tag: "v1.0.9"
 
 satosa:
   replicas: 2
@@ -23,6 +23,94 @@ satosa:
     CLIENT_DB_JSON:       { secretKeyRef: { name: oidc2fer, key: CLIENT_DB_JSON       } }
 
     OIDC_DB_URI: { secretKeyRef: { name: redis.redis.libre.sh, key: url } }
+
+    # As provided by RENATER on 2025-09-19
+    SIRET_MAP: |-
+      {
+        "https://shibboleth.grenoble-inp.fr/idp/shibboleth": "19381912500017",
+        "https://identites.ensea.fr/idp/shibboleth": "19951376300011",
+        "https://idp.ent.dauphine.fr/idp/shibboleth": "19754692200018",
+        "https://idp.univ-lyon2.fr/idp/shibboleth": "19691775100014",
+        "https://shibboleth.insa-rouen.fr/idp/shibboleth": "19760165100023",
+        "https://idp1.univ-fcomte.fr/idp/shibboleth": "93810656400017",
+        "https://idp.univ-tours.fr/idp/shibboleth": "19370800500478",
+        "https://apps.univ-lr.fr/idp/shibboleth": "19170032700015",
+        "https://shib.mines-albi.fr/idp/shibboleth": "18009202500097",
+        "https://federation.upf.pf/idp/shibboleth": "19987001500013",
+        "https://federation.utbm.fr/idp/shibboleth": "19900356700013",
+        "urn:mace:cru.fr:federation:univ-paris1.fr": "19751717000019",
+        "https://idp.sciencespobordeaux.fr/idp/shibboleth": "19330192600039",
+        "https://vip.espci.fr/saml2/idp/metadata.php": "20000068500012",
+        "urn:mace:cru.fr:federation:univ-nantes.fr": "13002974700016",
+        "https://shibboleth.univ-corse.fr/idp/shibboleth": "19202664900264",
+        "https://srv-fii.insa-toulouse.fr/idp/shibboleth": "19310152400018",
+        "urn:mace:cru.fr:federation:univ-rouen.fr": "19761904200017",
+        "https://ident-shib.ensc-rennes.fr/idp/shibboleth": "19350077400016",
+        "urn:mace:cru.fr:federation:unilim.fr": "19870669900321",
+        "https://idp.inha.fr/idp/shibboleth": "19754688000018",
+        "https://federation.unimes.fr/idp/shibboleth": "93249157400012",
+        "urn:mace:cru.fr:federation:univ-rennes1.fr": "13003051300019",
+        "urn:mace:cru.fr:federation:univ-ubs.fr": "19561718800600",
+        "https://idp.univ-orleans.fr/idp/shibboleth": "19450855200016",
+        "https://shibboleth.univ-savoie.fr/idp/shibboleth": "19730858800015",
+        "https://idp.cirad.fr/idp/shibboleth": "33159627000016",
+        "https://sso.ird.fr/idp/shibboleth": "18000602500159",
+        "https://idp.ensma.fr/idp/shibboleth": "19860073600021",
+        "https://idp.renater.fr/idp/shibboleth": "18008947600055",
+        "https://idp.inp-toulouse.fr/idp/shibboleth": "19311381800127",
+        "https://idp.unistra.fr/idp/shibboleth": "13000545700010",
+        "https://idp1.agroparistech.fr/idp/shibboleth": "13000285000134",
+        "https://janus.cnrs.fr/idp": "18008901303720",
+        "https://federation.umontpellier.fr/idp/shibboleth": "13002979600013",
+        "https://idp.sciencespo-lyon.fr/idp/shibboleth": "19690173000024",
+        "https://shibboleth.univ-grenoble-alpes.fr/idp/shibboleth": "13002608100013",
+        "https://idp.bnu.fr/idp/shibboleth": "18004406700015",
+        "https://ruhnu.univ-tlse2.fr/idp/shibboleth": "19311383400017",
+        "https://idp2.amue.fr/idp/shibboleth": "18004312700091",
+        "https://idpv3.univ-amu.fr/idp/shibboleth": "13001533200013",
+        "https://idp-ng.univ-st-etienne.fr/idp/shibboleth": "93850168100010",
+        "https://identities.univ-jfc.fr/idp/prod": "19811201300018",
+        "https://idp3.univ-lorraine.fr/idp/shibboleth": "13001550600012",
+        "https://idp.univ-lemans.fr/idp/shibboleth": "19720916600010",
+        "https://idp.univ-lille.fr/idp/shibboleth": "13002975400012",
+        "https://idp.univ-tln.fr/idp/shibboleth": "19830766200017",
+        "https://idp.uca.fr/idp/shibboleth": "13002806100013",
+        "https://shibboleth3.utt.fr/idp/shibboleth": "19101060200032",
+        "https://idp3.ut-capitole.fr/idp/shibboleth": "13003061200019",
+        "https://idp.imt-atlantique.fr/idp/shibboleth": "18009202500121",
+        "https://shib.univ-lehavre.fr/idp/shibboleth": "19762762300097",
+        "https://idp2.univ-paris8.fr/idp/shibboleth": "19931827000014",
+        "https://shib2.unc.nc/idp/shibboleth": "13000322100012",
+        "https://upnidp2.parisnanterre.fr/idp/shibboleth": "19921204400010",
+        "https://idp.ensfea.fr/idp/shibboleth": "19310143300012",
+        "https://idp.univ-eiffel.fr/idp/shibboleth": "13002612300013",
+        "https://idp.insa-rennes.fr/idp/shibboleth": "19350097200016",
+        "https://idp.univ-tlse3.fr/idp/shibboleth": "93827139200012",
+        "https://idp.universite-paris-saclay.fr/idp": "13002602400054",
+        "https://shibboleth.ens2m.fr/idp/shibboleth": "19250082500026",
+        "https://sso-ciation-saclay.centralesupelec.fr/idp/shibboleth": "13002076100016",
+        "https://federation.ens.psl.eu/idp/shibboleth": "19753459700012",
+        "https://authentification.inrae.fr/saml/metadata/idp": "18007003901803",
+        "https://idp.ensam.eu/idp/shibboleth": "19753472000010",
+        "https://idp1.ens-paris-saclay.fr/idp/shibboleth": "19940607500036",
+        "https://idp2.emse.fr/idp/shibboleth": "18009202500105",
+        "https://idp-septa.onisep.fr/idp/shibboleth": "18004302800653",
+        "https://papangue.vetagro-sup.fr/idp/shibboleth": "13000858400018",
+        "https://multipass.imt-nord-europe.fr/idp/shibboleth": "18009202500139",
+        "https://idp4.unicaen.fr/idp/shibboleth": "19141408500016",
+        "https://sso.bordeaux-inp.fr/idp/shibboleth": "13000635600013",
+        "https://auth.uttop.fr/saml/metadata": "19650048200019",
+        "https://idp.univ-cotedazur.fr/idp/shibboleth": "13002566100013",
+        "https://idp2.brgm.fr/idp/shibboleth": "58205614900120",
+        "https://idp.crous-reims.fr/idp/shibboleth": "18510200100327",
+        "https://idp.univ-avignon.fr/idp/shibboleth": "19840685200204",
+        "https://idp-genci.renater.fr/idp/shibboleth": "49468697500041",
+        "https://auth.sso.vet-alfort.fr/saml/metadata": "19940608300014",
+        "https://idp.univ-perp.fr/idp/shibboleth": "19660437500010",
+        "https://idp.institut-agro.fr/idp": "13002622200013",
+        "https://prod-idp.inria.fr": "18008904700013",
+        "https://idp.ec-nantes.fr/idp/shibboleth": "19440100600011"
+      }
 
 ingress:
   enabled: true

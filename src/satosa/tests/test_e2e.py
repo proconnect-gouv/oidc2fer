@@ -20,6 +20,7 @@ def renater_test_idp(page, login):
 
 def renater_wayf(page):
     page.get_by_text("Veuillez sélectionner").click()
+    page.get_by_role("searchbox").fill("GIP RENATER - IdP de test")
     page.get_by_role("option", name="GIP RENATER - IdP de test", exact=True).click()
     page.get_by_role("button", name="Sélection").click()
 
@@ -48,6 +49,7 @@ def oidc_to_renater(
         "email": expected_email,
         "given_name": expected_given_name,
         "usual_name": expected_usual_name,
+        "siret": "12345678200010",
     }.items() <= userinfo.items()
     return id_token
 
@@ -101,6 +103,7 @@ def pro_connect_to_renater(
         "email": expected_email,
         "given_name": expected_given_name,
         "usual_name": expected_usual_name,
+        "siret": "12345678200010",
     }.items() <= result.items()
     return result
 
@@ -125,7 +128,7 @@ def test_pro_connect_to_renater_student_not_allowed(page: Page):
     renater_wayf(page)
     renater_test_idp(page, login="etudiant1")
 
-    expect(page.locator("body")).to_contain_text("Une erreur technique est survenue.")
+    expect(page.locator("body")).to_contain_text("access_denied")
 
 
 @pytest.mark.skipif(

@@ -57,7 +57,7 @@ number and date.
 ## Deploying a release to production (DINUM instance)
 
 1. Make sure the release you want to deploy has been built and appears on
-   https://hub.docker.com/r/lasuite/oidc2fer/tags .
+   https://github.com/proconnect-gouv/oidc2fer/pkgs/container/oidc2fer
 2. Edit `image/tag` at the top of
    `src/helm/env.d/outscale-production/values.oidc2fer.yaml.gotmpl`.
 3. Commit and push to `main`.

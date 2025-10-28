@@ -1,7 +1,7 @@
 image:
-  repository: lasuite/oidc2fer
+  repository: ghcr.io/proconnect-gouv/oidc2fer
   pullPolicy: Always
-  tag: "main"
+  tag: "latest"
 
 satosa:
   replicas: 2
@@ -23,6 +23,11 @@ satosa:
     CLIENT_DB_JSON:       { secretKeyRef: { name: oidc2fer, key: CLIENT_DB_JSON       } }
 
     OIDC_DB_URI: { secretKeyRef: { name: redis.redis.libre.sh, key: url } }
+
+    SIRET_MAP: |-
+      {
+          "https://test-idp.federation.renater.fr/idp/shibboleth": "12345678200010"
+      }
 
 ingress:
   enabled: true

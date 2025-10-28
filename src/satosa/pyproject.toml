@@ -31,10 +31,10 @@ dependencies = [
 ]
 
 [project.urls]
-"Bug Tracker" = "https://github.com/numerique-gouv/oidc2fer/issues/new"
-"Changelog" = "https://github.com/numerique-gouv/oidc2fer/blob/main/CHANGELOG.md"
-"Homepage" = "https://github.com/numerique-gouv/oidc2fer"
-"Repository" = "https://github.com/numerique-gouv/oidc2fer"
+"Bug Tracker" = "https://github.com/proconnect-gouv/oidc2fer/issues/new"
+"Changelog" = "https://github.com/proconnect-gouv/oidc2fer/blob/main/CHANGELOG.md"
+"Homepage" = "https://github.com/proconnect-gouv/oidc2fer"
+"Repository" = "https://github.com/proconnect-gouv/oidc2fer"
 
 [project.optional-dependencies]
 dev = [
