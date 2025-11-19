@@ -104,8 +104,10 @@ jobs:
 
   helmfile-lint:
     runs-on: ubuntu-latest
+    # skip this job on forks since they won't have access to the required secrets
+    if: github.event.pull_request.head.repo.full_name == github.repository || github.event_name != 'pull_request'
     container:
-      image: ghcr.io/helmfile/helmfile:v0.171.0
+      image: ghcr.io/helmfile/helmfile:v1.2.0
     steps:
       -
         uses: actions/create-github-app-token@v1
@@ -123,15 +125,13 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
       -
         name: Helmfile lint
-        shell: bash
+        env:
+          SOPS_AGE_KEY: ${{ secrets.SOPS_PRIVATE }}
         run: |
-          mkdir -p ~/.config/sops/age/
-          echo ${{ secrets.SOPS_PRIVATE }} > ~/.config/sops/age/keys.txt
-          set -e
-          HELMFILE=src/helm/helmfile.yaml
-          environments=$(awk '/environments:/ {flag=1; next} flag && NF {print} !NF {flag=0}' "$HELMFILE" | grep -E '^[[:space:]]{2}[a-zA-Z]+' | sed 's/^[[:space:]]*//;s/:.*//')
+          HELMFILE=src/helm/helmfile.yaml.gotmpl
+          environments=$(< $HELMFILE awk -F'[ :]+' '/^  [^ ]/ {print $2} /^---/ { exit }')
           for env in $environments; do
             echo "################### $env lint ###################"
-            helmfile -e $env -f src/helm/helmfile.yaml lint || exit 1
+            helmfile -e $env -f "$HELMFILE" lint || exit 1
             echo -e "\n"
           done

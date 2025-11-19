@@ -1,3 +1,20 @@
+environments:
+  dev:
+    values:
+      - version: 0.0.1
+    secrets:
+      - env.d/{{ .Environment.Name }}/secrets.enc.yaml
+  staging:
+    values:
+      - version: 0.0.1
+    secrets:
+      - env.d/{{ .Environment.Name }}/secrets.enc.yaml
+  outscale-production:
+    values:
+      - version: 0.0.1
+    secrets:
+      - env.d/{{ .Environment.Name }}/secrets.enc.yaml
+---
 repositories:
 - name: bitnami
   url: registry-1.docker.io/bitnamicharts
@@ -29,21 +46,3 @@ releases:
       - env.d/{{ .Environment.Name }}/values.oidc2fer.yaml.gotmpl
     secrets:
       - env.d/{{ .Environment.Name }}/secrets.enc.yaml
-
-environments:
-  dev:
-    values:
-      - version: 0.0.1
-    secrets:
-      - env.d/{{ .Environment.Name }}/secrets.enc.yaml
-  staging:
-    values:
-      - version: 0.0.1
-    secrets:
-      - env.d/{{ .Environment.Name }}/secrets.enc.yaml
-  outscale-production:
-    values:
-      - version: 0.0.1
-    secrets:
-      - env.d/{{ .Environment.Name }}/secrets.enc.yaml
-
