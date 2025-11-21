@@ -1,0 +1,22 @@
+BASE: !ENV BASE_URL
+COOKIE_STATE_NAME: SATOSA_STATE
+CONTEXT_STATE_DELETE: 'yes'
+STATE_ENCRYPTION_KEY: !ENV STATE_ENCRYPTION_KEY
+cookies_samesite_compat:
+  - - SATOSA_STATE
+    - SATOSA_STATE_LEGACY
+INTERNAL_ATTRIBUTES: internal_attributes.yaml
+BACKEND_MODULES:
+  - plugins/backends/saml2_backend.yaml
+FRONTEND_MODULES:
+  - plugins/frontends/openid_connect_frontend.yaml
+  - plugins/frontends/ping_frontend.yaml
+MICRO_SERVICES:
+  - plugins/microservices/primary_identifier.yaml
+  - plugins/microservices/static_attributes.yaml
+  - plugins/microservices/attribute_processor.yaml
+LOGGING:
+  # All the logging configuration is done in the Gunicorn config, this is just
+  # here to avoid overwriting it with the default SATOSA config
+  version: 1
+  incremental: true

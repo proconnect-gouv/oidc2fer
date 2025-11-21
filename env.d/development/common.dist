@@ -1,2 +1,3 @@
 # Python
-PYTHONPATH=/app
+LOG_LEVEL=DEBUG
+LOG_LEVELS='{ "satosa.backends.saml2": "DEBUG" }'

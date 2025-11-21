@@ -38,6 +38,7 @@ printenv SAML2_BACKEND_CERT > /tmp/backend.crt
 printenv SAML2_BACKEND_KEY > /tmp/backend.key
 printenv OIDC_FRONTEND_KEY > /tmp/frontend.key
 printenv CLIENT_DB_JSON > /tmp/client_db.json
+printenv SAML2_IDP_METADATA > /tmp/idp_metadata.xml
 
 # Redis database number must be specified
 if [[ ! $OIDC_DB_URI =~ /[0-9]+$ ]]; then

@@ -1,21 +1,21 @@
 image:
   repository: ghcr.io/proconnect-gouv/oidc2fer
   pullPolicy: Always
-  tag: "latest"
+  tag: "main"
 
 satosa:
   replicas: 2
-  workingDir: /app/config/fer
+  workingDir: /app/config/cnb
   envVars:
-    BASE_URL: https://oidc2fer-staging.beta.numerique.gouv.fr
+    BASE_URL: https://oidc2cnb-staging.beta.numerique.gouv.fr
     GUNICORN_CMD_ARGS: --workers=3
 
     LOG_LEVEL: DEBUG
     LOG_LEVELS: '{ "satosa.backends.saml2": "DEBUG" }'
 
-    SAML2_DISCOVERY_URL: https://discovery.renater.fr/test/
-    SAML2_METADATA_URL: https://pub.federation.renater.fr/metadata/test/preview/preview-idps-test-metadata.xml
-    SAML2_ENTITY_ID:  https://oidc2fer-staging.beta.numerique.gouv.fr/Saml2/proxy_saml2_backend.xml-test
+    SAML2_IDP_METADATA: { secretKeyRef: { name: oidc2fer, key: SAML2_IDP_METADATA } }
+
+    SAML2_ENTITY_ID:  https://oidc2cnb-staging.beta.numerique.gouv.fr/Saml2/proxy_saml2_backend.xml
 
     STATE_ENCRYPTION_KEY: { secretKeyRef: { name: oidc2fer, key: STATE_ENCRYPTION_KEY } }
     SAML2_BACKEND_CERT:   { secretKeyRef: { name: oidc2fer, key: SAML2_BACKEND_CERT   } }
@@ -25,14 +25,9 @@ satosa:
 
     OIDC_DB_URI: { secretKeyRef: { name: redis.redis.libre.sh, key: url } }
 
-    SIRET_MAP: |-
-      {
-          "https://test-idp.federation.renater.fr/idp/shibboleth": "12345678200010"
-      }
-
 ingress:
   enabled: true
-  host: oidc2fer-staging.beta.numerique.gouv.fr
+  host: oidc2cnb-staging.beta.numerique.gouv.fr
   className: nginx
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt

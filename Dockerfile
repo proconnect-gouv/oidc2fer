@@ -37,6 +37,9 @@ CMD ["gunicorn", "-c", "/usr/local/etc/gunicorn/satosa.py"]
 # ---- Development image ----
 FROM common AS development
 
+# Install curl (for healthchecks)
+RUN apt-get update && apt-get install -qy curl
+
 # Playwright browsers
 ENV PLAYWRIGHT_BROWSERS_PATH=/pw-browsers
 RUN pip install playwright
@@ -51,10 +54,15 @@ WORKDIR /app
 # Copy project file to list dependencies
 COPY ./src/satosa/pyproject.toml /app/
 
-# Install oidc2fer in editable mode along with development dependencies
-RUN pip install -e .[dev]
+# Create empty module directory to please pip install --editable
+# (without this, the oidc2fer module will not be importable because
+#  pip --editable scans the directory to create its "links")
+RUN mkdir -p /app/oidc2fer
 
-# Copy oidc2fer application (see .dockerignore)
+# Install oidc2fer in editable mode along with development dependencies
+RUN pip install --editable .[dev]
+
+# Copy oidc2fer sources (see .dockerignore)
 COPY ./src/satosa /app/
 
 # Switch to unprivileged user

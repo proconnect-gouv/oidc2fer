@@ -28,6 +28,13 @@ dependencies = [
     "redis==5.0.4",
     "JSON-log-formatter==1.0",
     "WhiteNoise==6.7.0",
+    # Use the most recent pysaml2 that doesn't have the recurrence of
+    # https://github.com/IdentityPython/pysaml2/issues/819
+    # (AuthNRequests signed twice)
+    "pysaml2==7.1.0",
+    # Pin xmlschema like pysaml2 did in release 7.5.1, see
+    # https://github.com/IdentityPython/pysaml2/issues/947#issuecomment-1916767026
+    "xmlschema==2.5.1",
 ]
 
 [project.urls]

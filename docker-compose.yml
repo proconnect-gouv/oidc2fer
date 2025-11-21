@@ -38,24 +38,27 @@ services:
     volumes:
       - ./src/satosa:/app
       - ./docker/files/usr/local/etc/gunicorn/satosa.py:/usr/local/etc/gunicorn/satosa.py
+    working_dir: /app/config/fer
     depends_on:
       - redis
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8000/ping"]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+      start_interval: 1s
 
   oidc-test-client:
     build: docker/oidc-test-client
-    depends_on:
-      - nginx # nginx must be up to override satosa.traefik.me resolution
-      - app-dev
     stop_signal: SIGKILL
     volumes:
       - ./docker/oidc-test-client:/app
       - ./env.d/development/certs/mkcert-root-ca.pem:/usr/local/share/ca-certificates/mkcert-root-ca.crt
     # - run update-ca-certificates to make mkcert certificates valid
-    # - add startup delay because IDP must be available on boot
     entrypoint: |
       /bin/bash -c '
         cat /usr/local/share/ca-certificates/mkcert-root-ca.crt >> $(python -m certifi)
-        sleep 1
         cd /app
         exec python app.py
       '
