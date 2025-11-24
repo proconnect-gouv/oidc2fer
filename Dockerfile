@@ -68,7 +68,8 @@ COPY ./src/satosa /app/
 
 WORKDIR /app
 
-RUN pip install .
+# Uninstall pip, setuptools and wheel after installation to reduce attack surface
+RUN pip install . && pip uninstall -y setuptools wheel pip
 
 # Switch to unprivileged user
 USER ${DOCKER_USER}
