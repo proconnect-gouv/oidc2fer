@@ -11,13 +11,14 @@ version = "0.1.0"
 authors = [{ "name" = "DINUM", "email" = "dev@mail.numerique.gouv.fr" }]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
-    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: System Administrators",
     "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.14",
 ]
-description = "An application to handle contacts and teams."
+description = "A gateway from RENATER's FER to ProConnect's OIDC provider, built on top of SATOSA."
 keywords = ["OIDC", "SAML", "Shibboleth", "FER", "RENATER"]
 license = { file = "LICENSE" }
 readme = "README.md"
@@ -48,9 +49,6 @@ dev = [
 [tool.setuptools]
 packages = { find = { where = ["."], exclude = ["tests"] } }
 zip-safe = true
-
-[tool.distutils.bdist_wheel]
-universal = true
 
 [tool.ruff]
 exclude = [
