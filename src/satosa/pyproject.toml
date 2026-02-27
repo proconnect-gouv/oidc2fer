@@ -21,13 +21,13 @@ description = "An application to handle contacts and teams."
 keywords = ["OIDC", "SAML", "Shibboleth", "FER", "RENATER"]
 license = { file = "LICENSE" }
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.14"
 dependencies = [
     "SATOSA==8.5.1",
-    "gunicorn==23.0.0",
-    "redis==5.0.4",
-    "JSON-log-formatter==1.0",
-    "WhiteNoise==6.7.0",
+    "gunicorn==25.1.0",
+    "redis==7.2.1",
+    "JSON-log-formatter==1.1.1",
+    "WhiteNoise==6.12.0",
 ]
 
 [project.urls]
@@ -40,9 +40,9 @@ dependencies = [
 dev = [
     "pylint==3.1.0",
     "pytest-cov==4.1.0",
-    "pytest==8.0.2",
-    "ruff==0.2.2",
-    "pytest-playwright==0.4.4",
+    "pytest==9.0.2",
+    "ruff==0.15.4",
+    "pytest-playwright==0.7.2",
 ]
 
 [tool.setuptools]
