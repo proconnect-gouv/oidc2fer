@@ -42,7 +42,8 @@ CMD ["gunicorn", "-c", "/usr/local/etc/gunicorn/satosa.py"]
 FROM common AS development
 
 # Install curl (for healthchecks)
-RUN apt-get update && apt-get install -qy curl
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    apt-get update && apt-get install -qy curl
 
 # Playwright browsers
 ENV PLAYWRIGHT_BROWSERS_PATH=/pw-browsers
