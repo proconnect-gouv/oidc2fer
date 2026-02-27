@@ -40,6 +40,13 @@ services:
       - ./docker/files/usr/local/etc/gunicorn/satosa.py:/usr/local/etc/gunicorn/satosa.py
     depends_on:
       - redis
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8000/ping"]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+      start_interval: 1s
 
   oidc-test-client:
     build: docker/oidc-test-client
