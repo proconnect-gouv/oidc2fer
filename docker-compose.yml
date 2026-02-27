@@ -30,7 +30,7 @@ services:
           }
         }
       SAML2_DISCOVERY_URL: https://discovery.renater.fr/test/
-      SAML2_METADATA_URL: https://pub.federation.renater.fr/metadata/test/preview/preview-idps-test-metadata.xml
+      SAML2_METADATA_URL: https://pub.federation.renater.fr/metadata/test/idps.xml
       SAML2_ENTITY_ID: https://satosa.traefik.me/Saml2/proxy_saml2_backend.xml
     env_file:
       - env.d/development/common
