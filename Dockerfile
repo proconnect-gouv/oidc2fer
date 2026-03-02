@@ -1,12 +1,16 @@
 # ---- base image to inherit from ----
-FROM python:3.11.12-slim-bookworm AS common
+FROM python:3.14.3-slim-trixie AS common
 
 # Install xmlsec1 dependencies required for xmlsec (for SAML)
 # Needs to be kept before the `pip install`
-RUN apt-get update && \
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    apt-get update && \
     apt-get -y upgrade && \
     apt-get install -qy --no-install-recommends xmlsec1 && \
     rm -rf /var/lib/apt/lists/*
+
+# Silence pip warnings about running as root in a container
+ENV PIP_ROOT_USER_ACTION=ignore
 
 # We want the most up-to-date stable pip release
 RUN pip install --upgrade pip
@@ -36,6 +40,10 @@ CMD ["gunicorn", "-c", "/usr/local/etc/gunicorn/satosa.py"]
 
 # ---- Development image ----
 FROM common AS development
+
+# Install curl (for healthchecks)
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    apt-get update && apt-get install -qy curl
 
 # Playwright browsers
 ENV PLAYWRIGHT_BROWSERS_PATH=/pw-browsers

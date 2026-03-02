@@ -26,7 +26,8 @@ fi
 # https://github.com/kubernetes-sigs/kind/issues/2875
 # https://github.com/containerd/containerd/blob/main/docs/cri/config.md#registry-configuration
 # See: https://github.com/containerd/containerd/blob/main/docs/hosts.md
-cat <<EOF | kind create cluster --config=-
+kind --name=oidc2fer delete cluster || true
+cat <<EOF | kind --name=oidc2fer create cluster --config=-
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 containerdConfigPatches:
@@ -35,7 +36,6 @@ containerdConfigPatches:
     config_path = "/etc/containerd/certs.d"
 nodes:
 - role: control-plane
-  image: kindest/node:v1.27.3
   kubeadmConfigPatches:
   - |
     kind: InitConfiguration
@@ -50,9 +50,7 @@ nodes:
     hostPort: 443
     protocol: TCP
 - role: worker
-  image: kindest/node:v1.27.3
 - role: worker
-  image: kindest/node:v1.27.3
 EOF
 
 # 3. Add the registry config to the nodes
@@ -64,7 +62,7 @@ EOF
 # We want a consistent name that works from both ends, so we tell containerd to
 # alias localhost:${reg_port} to the registry container when pulling images
 REGISTRY_DIR="/etc/containerd/certs.d/localhost:${reg_port}"
-for node in $(kind get nodes); do
+for node in $(kind --name=oidc2fer get nodes); do
 	docker exec "${node}" mkdir -p "${REGISTRY_DIR}"
 	cat <<EOF | docker exec -i "${node}" cp /dev/stdin "${REGISTRY_DIR}/hosts.toml"
 [host."http://${reg_name}:5000"]
@@ -90,6 +88,17 @@ data:
     host: "localhost:${reg_port}"
     help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
 EOF
+
+# Patch the CoreDNS configmap to rewrite requests for *.127.0.0.1.nip.io to the Ingress Controller service
+kubectl -n kube-system get configmap coredns -o yaml |
+  yq '.data.Corefile |= (
+        trim
+        | split("\n")
+        | .[-1] = "    rewrite name regex .*\\.127\\.0\\.0\\.1\\.nip\\.io ingress-nginx-controller.ingress-nginx.svc.cluster.local answer auto\n"
+          + .[-1]
+        | join("\n")
+      )' |
+  kubectl replace -f -
 
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
 kubectl -n ingress-nginx create secret tls mkcert --key /tmp/127.0.0.1.nip.io+1-key.pem --cert /tmp/127.0.0.1.nip.io+1.pem
