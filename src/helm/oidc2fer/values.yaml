@@ -116,7 +116,7 @@ satosa:
   ## @param satosa.probes.readiness.initialDelaySeconds [nullable] Configure timeout for satosa readiness probe
   probes:
     liveness:
-      targetPost: 8000
+      targetPort: 8000
       path: /ping
       initialDelaySeconds: 10
     #readiness:
