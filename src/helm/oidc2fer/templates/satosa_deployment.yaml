@@ -1,4 +1,3 @@
-{{- $envVars := include "oidc2fer.common.env" (list . .Values.satosa) -}}
 {{- $fullName := include "oidc2fer.satosa.fullname" . -}}
 {{- $component := "satosa" -}}
 apiVersion: apps/v1
@@ -42,10 +41,9 @@ spec:
           args:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          env:
-            {{- if $envVars}}
-            {{- $envVars | indent 12 }}
-            {{- end }}
+          {{- with .Values.satosa.env }}
+          env: {{ toJson . }}
+          {{- end }}
           {{- with .Values.satosa.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}

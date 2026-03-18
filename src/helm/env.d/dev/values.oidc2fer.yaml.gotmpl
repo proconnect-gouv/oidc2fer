@@ -10,46 +10,64 @@ satosa:
       requiredDuringSchedulingIgnoredDuringExecution:
       - labelSelector:
           matchExpressions:
-          - key: app.kubernetes.io/name
+          - key: app.kubernetes.io/instance
             operator: In
             values:
-            - redis
+            - redis-oidc
         topologyKey: kubernetes.io/hostname
-  envVars:
-    BASE_URL: https://oidc2fer.127.0.0.1.nip.io
-    GUNICORN_CMD_ARGS: --workers=3
+  env:
+    - name: BASE_URL
+      value: https://oidc2fer.127.0.0.1.nip.io
+    
+    - name: GUNICORN_CMD_ARGS
+      value: --workers=3
 
-    LOG_LEVEL: debug
+    - name: LOG_LEVEL
+      value: debug
 
-    SAML2_DISCOVERY_URL: https://discovery.renater.fr/test/
-    SAML2_METADATA_URL: https://pub.federation.renater.fr/metadata/test/idps.xml
-    SAML2_ENTITY_ID:  https://oidc2fer.127.0.0.1.nip.io/Saml2/proxy_saml2_backend.xml
+    - name: SAML2_DISCOVERY_URL
+      value: https://discovery.renater.fr/test/
+    - name: SAML2_METADATA_URL
+      value: https://pub.federation.renater.fr/metadata/test/idps.xml
+    - name: SAML2_ENTITY_ID
+      value: https://oidc2fer.127.0.0.1.nip.io/Saml2/proxy_saml2_backend.xml
 
-    STATE_ENCRYPTION_KEY: { secretKeyRef: { name: oidc2fer, key: STATE_ENCRYPTION_KEY } }
-    SAML2_BACKEND_CERT:   { secretKeyRef: { name: oidc2fer, key: SAML2_BACKEND_CERT   } }
-    SAML2_BACKEND_KEY:    { secretKeyRef: { name: oidc2fer, key: SAML2_BACKEND_KEY    } }
-    OIDC_FRONTEND_KEY:    { secretKeyRef: { name: oidc2fer, key: OIDC_FRONTEND_KEY    } }
+    - name: STATE_ENCRYPTION_KEY
+      valueFrom: { secretKeyRef: { name: oidc2fer, key: STATE_ENCRYPTION_KEY } }
+    - name: SAML2_BACKEND_CERT
+      valueFrom: { secretKeyRef: { name: oidc2fer, key: SAML2_BACKEND_CERT   } }
+    - name: SAML2_BACKEND_KEY
+      valueFrom: { secretKeyRef: { name: oidc2fer, key: SAML2_BACKEND_KEY    } }
+    - name: OIDC_FRONTEND_KEY
+      valueFrom: { secretKeyRef: { name: oidc2fer, key: OIDC_FRONTEND_KEY    } }
 
-    OIDC_DB_URI: "redis://:pass@redis-master:6379"
-    CLIENT_DB_JSON: |-
-      {
-        "oidc-test-client": {
-          "response_types": [
-            "id_token",
-            "code"
-          ],
-          "redirect_uris": [
-            "https://oidc-test-client.traefik.me/redirect_uri",
-            "https://oidc-test-client.traefik.me:8443/redirect_uri"
-          ],
-          "client_secret": "oidc-test-secret",
-          "token_endpoint_auth_method": "client_secret_post"
+    - name: REDIS_PASSWORD
+      valueFrom: { secretKeyRef: { name: oidc2fer, key: REDIS_PASSWORD } }
+
+    - name: OIDC_DB_URI
+      value: "redis://:$(REDIS_PASSWORD)@redis-oidc-master:6379/0"
+
+    - name: CLIENT_DB_JSON
+      value: |-
+        {
+          "oidc-test-client": {
+            "response_types": [
+              "id_token",
+              "code"
+            ],
+            "redirect_uris": [
+              "https://oidc-test-client.traefik.me/redirect_uri",
+              "https://oidc-test-client.traefik.me:8443/redirect_uri"
+            ],
+            "client_secret": "oidc-test-secret",
+            "token_endpoint_auth_method": "client_secret_post"
+          }
         }
-      }
-    SIRET_MAP: |-
-      {
-          "https://test-idp.federation.renater.fr/idp/shibboleth": "12345678200010"
-      }
+    - name: SIRET_MAP
+      value: |-
+        {
+            "https://test-idp.federation.renater.fr/idp/shibboleth": "12345678200010"
+        }
 
 
 ingress:
