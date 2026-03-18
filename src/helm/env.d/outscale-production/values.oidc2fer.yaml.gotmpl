@@ -4,7 +4,7 @@ image:
   tag: "v1.0.12"
 
 satosa:
-  replicas: 2
+  replicas: 4
   envVars:
     BASE_URL: https://renater.agentconnect.gouv.fr
     GUNICORN_CMD_ARGS: --workers=3
@@ -158,7 +158,7 @@ satosa:
       memory: "256Mi"
       cpu: "250m"
     limits:
-      memory: "1Gi"
+      memory: "512Mi"
 
 ingress:
   enabled: true
