@@ -4,7 +4,17 @@ image:
   tag: "v1.0.12"
 
 satosa:
-  replicas: 8
+  replicas: 2
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: statefulset.kubernetes.io/pod-name
+            operator: In
+            values:
+            - redis--re-0
+        topologyKey: kubernetes.io/hostname
   envVars:
     BASE_URL: https://renater.agentconnect.gouv.fr
     GUNICORN_CMD_ARGS: --workers=3 --timeout=10

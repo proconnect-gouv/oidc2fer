@@ -5,6 +5,16 @@ image:
 
 satosa:
   replicas: 2
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: statefulset.kubernetes.io/pod-name
+            operator: In
+            values:
+            - redis--re-0
+        topologyKey: kubernetes.io/hostname
   envVars:
     BASE_URL: https://oidc2fer-staging.beta.numerique.gouv.fr
     GUNICORN_CMD_ARGS: --workers=3

@@ -4,7 +4,17 @@ image:
   tag: "latest"
 
 satosa:
-  replicas: 1
+  replicas: 2
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: app.kubernetes.io/name
+            operator: In
+            values:
+            - redis
+        topologyKey: kubernetes.io/hostname
   envVars:
     BASE_URL: https://oidc2fer.127.0.0.1.nip.io
     GUNICORN_CMD_ARGS: --workers=3
@@ -40,6 +50,7 @@ satosa:
       {
           "https://test-idp.federation.renater.fr/idp/shibboleth": "12345678200010"
       }
+
 
 ingress:
   enabled: true
