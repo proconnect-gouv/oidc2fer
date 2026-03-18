@@ -4,10 +4,10 @@ image:
   tag: "v1.0.12"
 
 satosa:
-  replicas: 4
+  replicas: 8
   envVars:
     BASE_URL: https://renater.agentconnect.gouv.fr
-    GUNICORN_CMD_ARGS: --workers=3
+    GUNICORN_CMD_ARGS: --workers=3 --timeout=10
 
     LOG_LEVEL: INFO
     LOG_LEVELS: '{ "satosa.backends.saml2": "DEBUG" }'
