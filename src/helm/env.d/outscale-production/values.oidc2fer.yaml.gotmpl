@@ -153,6 +153,12 @@ satosa:
         "https://idp4.cereq.fr/idp/shibboleth": "18004303600037",
         "urn:mace:cru.fr:federation:univ-angers.fr": "19490970100303"
       }
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "1Gi"
 
 ingress:
   enabled: true
