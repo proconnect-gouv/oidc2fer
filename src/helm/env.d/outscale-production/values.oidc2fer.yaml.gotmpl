@@ -17,7 +17,7 @@ satosa:
         topologyKey: kubernetes.io/hostname
   envVars:
     BASE_URL: https://renater.agentconnect.gouv.fr
-    GUNICORN_CMD_ARGS: --workers=3 --timeout=10
+    GUNICORN_CMD_ARGS: --workers=3
 
     LOG_LEVEL: INFO
     LOG_LEVELS: '{ "satosa.backends.saml2": "DEBUG" }'
