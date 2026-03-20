@@ -1,4 +1,4 @@
-FROM python:3.14
+FROM python:3.14.3-slim-trixie
 
 COPY . /app
 

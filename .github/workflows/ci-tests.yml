@@ -124,6 +124,14 @@ jobs:
           submodules: recursive
           token: ${{ steps.app-token.outputs.token }}
       -
+        name: Install mkcert
+        run: |
+          apt-get update -y -q && apt-get install -y -q libnss3-tools
+          curl -Ss -L -o mkcert https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-linux-amd64
+          chmod +x mkcert
+          mv mkcert /usr/local/bin/
+          TRUST_STORES=none mkcert -install
+      -
         name: Helmfile lint
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_PRIVATE }}

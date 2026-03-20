@@ -48,3 +48,11 @@ releases:
       - env.d/{{ .Environment.Name }}/values.oidc2fer.yaml.gotmpl
     secrets:
       - env.d/{{ .Environment.Name }}/secrets.enc.yaml
+
+  - name: oidc-test-client
+    installed: {{ eq .Environment.Name "dev" }}
+    version: {{ .Values.version }}
+    namespace: {{ .Namespace }}
+    chart: ./oidc-test-client
+    values:
+      - env.d/{{ .Environment.Name }}/values.oidc-test-client.yaml.gotmpl

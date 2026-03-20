@@ -13,6 +13,11 @@ docker_build(
     ]
 )
 
+docker_build(
+    'localhost:5001/oidc-test-client:latest',
+    context='docker/oidc-test-client'
+)
+
 watch_file('src/helm')
 
 k8s_yaml(local('cd src/helm && helmfile -n oidc2fer -e dev template .'))
