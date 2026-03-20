@@ -1,0 +1,22 @@
+image:
+  repository: localhost:5001/oidc-test-client
+  pullPolicy: Always
+  tag: "latest"
+
+ingress:
+  enabled: true
+  host: oidc-test-client.127.0.0.1.nip.io
+
+env:
+  - name: OIDC_ROOT_URL
+    value: https://oidc-test-client.127.0.0.1.nip.io
+  - name: OIDC_PROVIDER
+    value: https://oidc2fer.127.0.0.1.nip.io
+  - name: OIDC_CLIENT_ID
+    value: oidc-test-client
+  - name: OIDC_CLIENT_SECRET
+    value: oidc-test-secret
+  - name: OIDC_SCOPES
+    value: openid,uid,given_name,usual_name,email,siret
+  - name: EXTRA_ROOT_CA
+    value: {{ exec "mkcert" (list "-CAROOT") | trim | printf "%s/rootCA.pem" | readFile | quote }}

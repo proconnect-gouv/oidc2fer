@@ -1,5 +1,9 @@
+import concurrent.futures
 import json
+import logging
 import os
+import time
+import urllib.request
 
 import pytest
 from playwright.sync_api import Browser, Page, expect
@@ -32,7 +36,7 @@ def oidc_to_renater(
     expected_given_name="Georges",
     expected_usual_name="Grospieds",
 ):
-    page.goto("https://oidc-test-client.traefik.me")
+    page.goto("https://oidc-test-client.127.0.0.1.nip.io")
     renater_wayf(page)
     renater_test_idp(page, login=login)
 
@@ -41,6 +45,7 @@ def oidc_to_renater(
     result = json.loads(text)
 
     id_token = result["access_token_response"]["id_token"]
+    access_token = result["access_token_response"]["access_token"]
     assert {"acr": "eidas1"}.items() <= id_token.items()
     userinfo = result["userinfo"]
     assert {
@@ -51,7 +56,7 @@ def oidc_to_renater(
         "usual_name": expected_usual_name,
         "siret": "12345678200010",
     }.items() <= userinfo.items()
-    return id_token
+    return id_token, access_token
 
 
 @pytest.mark.skipif(
@@ -59,18 +64,53 @@ def oidc_to_renater(
 )
 def test_oidc_to_renater_keeps_sub(browser: Browser):
     with browser.new_context().new_page() as page:
-        id_token1 = oidc_to_renater(page)
+        id_token1, _ = oidc_to_renater(page)
     with browser.new_context().new_page() as page:
-        id_token2 = oidc_to_renater(page)
+        id_token2, _ = oidc_to_renater(page)
 
     assert id_token1["sub"] == id_token2["sub"]
+
+
+@pytest.mark.skipif(
+    "BENCH_E2E" not in os.environ, reason="Benchmark runs only if requested"
+)
+def test_benchmark_userinfo(browser: Browser):
+    with browser.new_context().new_page() as page:
+        _, access_token = oidc_to_renater(page)
+
+    request_count = int(os.environ.get("BENCH_E2E_N", "100"))
+    client_count = int(os.environ.get("BENCH_E2E_P", "2"))
+    start = time.time()
+
+    def make_request():
+        return urllib.request.urlopen(
+            urllib.request.Request(
+                "https://oidc2fer.127.0.0.1.nip.io/OIDC/userinfo",
+                headers={"Authorization": f"Bearer {access_token}"},
+            )
+        )
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=client_count) as executor:
+        futures = []
+        for _ in range(request_count):
+            futures.append(executor.submit(make_request))
+        for future in concurrent.futures.as_completed(futures):
+            with future.result() as resp:
+                assert resp.status == 200
+    end = time.time()
+    logging.info(
+        "Average userinfo request time with %d parallel requests: \
+            %.2f seconds",
+        client_count,
+        (end - start) / request_count,
+    )
 
 
 @pytest.mark.skipif(
     "TEST_E2E" not in os.environ, reason="Depends on app running locally"
 )
 def test_oidc_to_renater_student_not_allowed(page: Page):
-    page.goto("https://oidc-test-client.traefik.me")
+    page.goto("https://oidc-test-client.127.0.0.1.nip.io")
     renater_wayf(page)
     renater_test_idp(page, login="etudiant1")
 
@@ -135,5 +175,5 @@ def test_pro_connect_to_renater_student_not_allowed(page: Page):
     "TEST_E2E" not in os.environ, reason="Depends on app running locally"
 )
 def test_serve_static_assets(page: Page):
-    page.goto("https://satosa.traefik.me/images/logo.svg")
+    page.goto("https://oidc2fer.127.0.0.1.nip.io/images/logo.svg")
     expect(page.locator("svg")).to_be_visible()
