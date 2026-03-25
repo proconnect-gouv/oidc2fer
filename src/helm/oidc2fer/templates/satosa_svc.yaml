@@ -1,4 +1,3 @@
-{{- $envVars := include "oidc2fer.common.env" (list . .Values.satosa) -}}
 {{- $fullName := include "oidc2fer.satosa.fullname" . -}}
 {{- $component := "satosa" -}}
 apiVersion: v1
