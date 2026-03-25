@@ -21,20 +21,8 @@ repositories:
   oci: true
 
 releases:
-  - name: redis
-    installed: {{ eq .Environment.Name "dev" | toYaml }}
-    namespace: {{ .Namespace }}
-    chart: bitnami/redis
-    version: 18.19.2
-    values:
-      - auth:
-          password: pass
-        architecture: standalone
-        image:
-          repository: bitnamilegacy/redis
-
   - name: extra
-    installed: {{ ne .Environment.Name "dev" | toYaml }}
+    installed: {{ eq .Environment.Name "outscale-production" | toYaml }}
     namespace: {{ .Namespace }}
     chart: ./extra
     secrets:

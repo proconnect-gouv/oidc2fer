@@ -14,7 +14,7 @@ services:
       GUNICORN_CMD_ARGS: --workers=2
       TEST_E2E: 1
       #TEST_E2E_PC: 1
-      OIDC_DB_URI: redis://redis/0
+      OIDC_DB_URI: stateless://:STATE-ENCRYPTION-KEY@localhost
       CLIENT_DB_JSON: |
         {
           "oidc-test-client": {
@@ -38,8 +38,6 @@ services:
     volumes:
       - ./src/satosa:/app
       - ./docker/files/usr/local/etc/gunicorn/satosa.py:/usr/local/etc/gunicorn/satosa.py
-    depends_on:
-      - redis
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8000/ping"]
       interval: 60s
@@ -76,9 +74,6 @@ services:
       OIDC_SCOPES: openid,uid,given_name,usual_name,email,siret
     extra_hosts:
       - "oidc2fer.127.0.0.1.nip.io:host-gateway"
-
-  redis:
-    image: redis:7.2.4
 
   nginx:
     image: nginx:1.25
