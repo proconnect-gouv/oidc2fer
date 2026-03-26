@@ -5,29 +5,43 @@ image:
 
 satosa:
   replicas: 2
-  envVars:
-    BASE_URL: https://oidc2fer-staging.beta.numerique.gouv.fr
-    GUNICORN_CMD_ARGS: --workers=3
+  env:
+    - name: BASE_URL
+      value: https://oidc2fer-staging.beta.numerique.gouv.fr
+    - name: GUNICORN_CMD_ARGS
+      value: --workers=3
 
-    LOG_LEVEL: DEBUG
-    LOG_LEVELS: '{ "satosa.backends.saml2": "DEBUG" }'
+    - name: LOG_LEVEL
+      value: DEBUG
+    - name: LOG_LEVELS
+      value: '{ "satosa.backends.saml2": "DEBUG" }'
 
-    SAML2_DISCOVERY_URL: https://discovery.renater.fr/test/
-    SAML2_METADATA_URL: https://pub.federation.renater.fr/metadata/test/idps.xml
-    SAML2_ENTITY_ID:  https://oidc2fer-staging.beta.numerique.gouv.fr/Saml2/proxy_saml2_backend.xml-test
+    - name: SAML2_DISCOVERY_URL
+      value: https://discovery.renater.fr/test/
+    - name: SAML2_METADATA_URL
+      value: https://pub.federation.renater.fr/metadata/test/idps.xml
+    - name: SAML2_ENTITY_ID
+      value: https://oidc2fer-staging.beta.numerique.gouv.fr/Saml2/proxy_saml2_backend.xml-test
 
-    STATE_ENCRYPTION_KEY: { secretKeyRef: { name: oidc2fer, key: STATE_ENCRYPTION_KEY } }
-    SAML2_BACKEND_CERT:   { secretKeyRef: { name: oidc2fer, key: SAML2_BACKEND_CERT   } }
-    SAML2_BACKEND_KEY:    { secretKeyRef: { name: oidc2fer, key: SAML2_BACKEND_KEY    } }
-    OIDC_FRONTEND_KEY:    { secretKeyRef: { name: oidc2fer, key: OIDC_FRONTEND_KEY    } }
-    CLIENT_DB_JSON:       { secretKeyRef: { name: oidc2fer, key: CLIENT_DB_JSON       } }
+    - name: STATE_ENCRYPTION_KEY
+      valueFrom: { secretKeyRef: { name: oidc2fer, key: STATE_ENCRYPTION_KEY } }
+    - name: SAML2_BACKEND_CERT
+      valueFrom: { secretKeyRef: { name: oidc2fer, key: SAML2_BACKEND_CERT   } }
+    - name: SAML2_BACKEND_KEY
+      valueFrom: { secretKeyRef: { name: oidc2fer, key: SAML2_BACKEND_KEY    } }
+    - name: OIDC_FRONTEND_KEY
+      valueFrom: { secretKeyRef: { name: oidc2fer, key: OIDC_FRONTEND_KEY    } }
+    - name: CLIENT_DB_JSON
+      valueFrom: { secretKeyRef: { name: oidc2fer, key: CLIENT_DB_JSON       } }
 
-    OIDC_DB_URI: { secretKeyRef: { name: redis.redis.libre.sh, key: url } }
+    - name: OIDC_DB_URI
+      value: "stateless://:$(STATE_ENCRYPTION_KEY)@localhost"
 
-    SIRET_MAP: |-
-      {
-          "https://test-idp.federation.renater.fr/idp/shibboleth": "12345678200010"
-      }
+    - name: SIRET_MAP
+      value: |-
+        {
+            "https://test-idp.federation.renater.fr/idp/shibboleth": "12345678200010"
+        }
 
 ingress:
   enabled: true

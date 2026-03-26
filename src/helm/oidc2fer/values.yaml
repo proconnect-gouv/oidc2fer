@@ -21,10 +21,6 @@ image:
 nameOverride: ""
 fullnameOverride: ""
 
-## @skip commonEnvVars
-commonEnvVars: &commonEnvVars
-  <<: []
-
 ## @param ingress.enabled whether to enable the Ingress or not
 ## @param ingress.className IngressClass to use for the Ingress
 ## @param ingress.host Host for the Ingress
@@ -79,15 +75,8 @@ satosa:
   ## @param satosa.securityContext Configure satosa Pod security context
   securityContext: null
 
-  ## @param satosa.envVars Configure satosa container environment variables
-  ## @extra satosa.envVars.BY_VALUE Example environment variable by setting value directly
-  ## @extra satosa.envVars.FROM_CONFIGMAP.configMapKeyRef.name Name of a ConfigMap when configuring env vars from a ConfigMap
-  ## @extra satosa.envVars.FROM_CONFIGMAP.configMapKeyRef.key Key within a ConfigMap when configuring env vars from a ConfigMap
-  ## @extra satosa.envVars.FROM_SECRET.secretKeyRef.name Name of a Secret when configuring env vars from a Secret
-  ## @extra satosa.envVars.FROM_SECRET.secretKeyRef.key Key within a Secret when configuring env vars from a Secret
-  ## @skip satosa.envVars
-  envVars:
-    <<: *commonEnvVars
+  ## @param satosa.env Configure satosa container environment variables
+  env: []
 
   ## @param satosa.podAnnotations Annotations to add to the satosa Pod
   podAnnotations: {}
