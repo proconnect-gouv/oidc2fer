@@ -21,13 +21,6 @@ repositories:
   oci: true
 
 releases:
-  - name: extra
-    installed: {{ eq .Environment.Name "outscale-production" | toYaml }}
-    namespace: {{ .Namespace }}
-    chart: ./extra
-    secrets:
-      - env.d/{{ .Environment.Name }}/secrets.enc.yaml
-
   - name: oidc2fer
     version: {{ .Values.version }}
     namespace: {{ .Namespace }}
