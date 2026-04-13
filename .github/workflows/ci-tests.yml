@@ -140,7 +140,7 @@ jobs:
 
           # Overwrite encrypted production secrets with staging secrets
           # to be able to lint the helmfile without having access to production secrets
-          cp -v src/helm/env.d/{staging,outscale-production}/secrets.enc.yaml
+          cp -f src/helm/env.d/{staging,outscale-production}/secrets.enc.yaml
 
           environments=$(< $HELMFILE awk -F'[ :]+' '/^  [^ ]/ {print $2} /^---/ { exit }')
           for env in $environments; do
