@@ -1,5 +1,5 @@
-#!/bin/sh
-set -o errexit
+#!/usr/bin/env bash
+set -euo pipefail
 
 CURRENT_DIR=$(pwd)
 
