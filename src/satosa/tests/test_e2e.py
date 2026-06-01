@@ -118,7 +118,7 @@ def test_oidc_to_renater_student_not_allowed(page: Page):
 
 
 def pro_connect_login(page: Page, email):
-    page.goto("https://fsa1v2.integ01.dev-agentconnect.fr/")
+    page.goto("https://test.proconnect.gouv.fr/")
     page.get_by_role("button", name="S’identifier avec ProConnect").click()
     page.get_by_label("Email professionnel").fill(email)
     page.get_by_test_id("interaction-connection-button").click()
@@ -136,7 +136,7 @@ def pro_connect_to_renater(
     renater_test_idp(page, login=login)
 
     expect(page.locator("body")).to_contain_text(expected_email)
-    text = page.inner_text("#userinfo")
+    text = page.inner_text("code")
     result = json.loads(text)
     assert {
         "uid": f"{login}@test-renater.fr",
