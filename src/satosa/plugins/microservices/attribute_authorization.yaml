@@ -12,9 +12,3 @@ config:
           # We require it to be non-empty here, to avoid an unhandled error
           # later in the PrimaryIdentifier processor.
           - ".+"
-        eduPersonAffiliation:
-          - "(?i)^FACULTY$"
-          - "(?i)^STAFF$"
-          - "(?i)^EMPLOYEE$"
-          - "(?i)^RESEARCHER$"
-          - "(?i)^TEACHER$"

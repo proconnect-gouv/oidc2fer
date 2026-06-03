@@ -1,0 +1,1 @@
+from .affiliation_checker import AffiliationChecker

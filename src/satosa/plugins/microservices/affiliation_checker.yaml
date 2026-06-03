@@ -1,0 +1,10 @@
+module: oidc2fer.authorization.affiliation_checker.AffiliationChecker
+name: AffiliationChecker
+config:
+  attribute_name: eduPersonAffiliation
+  allowed_values:
+    - "faculty"
+    - "staff"
+    - "employee"
+    - "researcher"
+    - "teacher"
