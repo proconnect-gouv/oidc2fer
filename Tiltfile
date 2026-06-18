@@ -6,10 +6,11 @@ docker_build(
     'localhost:5001/oidc2fer:latest',
     context='.',
     dockerfile='./Dockerfile',
-    only=['./src/satosa', './docker', './env.d'],
     target = 'development',
     live_update=[
-        sync('./src/satosa', '/app'),
+        sync('./src', '/app/src'),
+        sync('./satosa', '/app/satosa'),
+        sync('./tests', '/app/tests'),
     ]
 )
 

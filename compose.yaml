@@ -6,13 +6,12 @@ services:
       args:
         DOCKER_USER: ${DOCKER_USER:-1000}
     user: ${DOCKER_USER:-1000}
-    image: oidc2fer:development
-    pull_policy: never
     environment:
+      HOME: /tmp
       PYLINTHOME: /app/.pylint.d
       BASE_URL: https://satosa.traefik.me
       GUNICORN_CMD_ARGS: --workers=2
-      TEST_E2E: 1
+      # TEST_E2E: 1
       #TEST_E2E_PC: 1
       OIDC_DB_URI: stateless://:STATE-ENCRYPTION-KEY@localhost
       CLIENT_DB_JSON: |
@@ -36,7 +35,9 @@ services:
       - env.d/development/common
       - env.d/development/satosa
     volumes:
-      - ./src/satosa:/app
+      - ./src:/app/src
+      - ./satosa:/app/satosa
+      - ./tests:/app/tests
       - ./docker/files/usr/local/etc/gunicorn/satosa.py:/usr/local/etc/gunicorn/satosa.py
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8000/ping"]
