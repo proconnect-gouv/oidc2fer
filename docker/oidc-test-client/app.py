@@ -1,13 +1,18 @@
-from flask import Flask, jsonify, request, session
-from oic.oic import Client
-from oic.utils.authn.client import CLIENT_AUTHN_METHOD
-from oic import rndstr
-from oic.oic.message import Claims, ClaimsRequest, RegistrationResponse
-from oic.utils.http_util import Redirect
-from oic.oic.message import AuthorizationResponse
-import secrets
 import logging
 import os
+import secrets
+
+from flask import Flask, jsonify, request, session
+from oic import rndstr
+from oic.oic import Client
+from oic.oic.message import (
+    AuthorizationResponse,
+    Claims,
+    ClaimsRequest,
+    RegistrationResponse,
+)
+from oic.utils.authn.client import CLIENT_AUTHN_METHOD
+from oic.utils.http_util import Redirect
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -71,7 +76,6 @@ def oidc_callback():
             error_response=aresp.to_dict(),
         )
 
-
     code = aresp["code"]
     logging.info("got auth code=%s", code)
 
@@ -90,7 +94,8 @@ def oidc_callback():
     logging.info("got userinfo=%s", userinfo)
 
     return jsonify(
-        access_token_response=access_token_response.to_dict(), userinfo=userinfo.to_dict()
+        access_token_response=access_token_response.to_dict(),
+        userinfo=userinfo.to_dict(),
     )
 
 
@@ -98,6 +103,6 @@ def oidc_callback():
 def health():
     return "OK"
 
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
-
