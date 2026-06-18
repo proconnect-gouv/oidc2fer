@@ -114,11 +114,18 @@ def test_oidc_to_renater_student_not_allowed(page: Page):
     renater_wayf(page)
     renater_test_idp(page, login="etudiant1")
 
-    expect(page.locator("pre")).to_contain_text('"error":"access_denied"')
+    text = page.inner_text("pre")
+    result = json.loads(text)
+    error_response = result.get("error_response")
+    assert error_response["error"] == "access_denied"
+    assert (
+        "Aucune des valeurs pour eduPersonAffiliation n'est autorisée: ['student', 'member']"
+        in error_response["error_description"]
+    )
 
 
 def pro_connect_login(page: Page, email):
-    page.goto("https://fsa1v2.integ01.dev-agentconnect.fr/")
+    page.goto("https://test.proconnect.gouv.fr/")
     page.get_by_role("button", name="S’identifier avec ProConnect").click()
     page.get_by_label("Email professionnel").fill(email)
     page.get_by_test_id("interaction-connection-button").click()
@@ -136,7 +143,7 @@ def pro_connect_to_renater(
     renater_test_idp(page, login=login)
 
     expect(page.locator("body")).to_contain_text(expected_email)
-    text = page.inner_text("#userinfo")
+    text = page.inner_text("code")
     result = json.loads(text)
     assert {
         "uid": f"{login}@test-renater.fr",
@@ -169,6 +176,9 @@ def test_pro_connect_to_renater_student_not_allowed(page: Page):
     renater_test_idp(page, login="etudiant1")
 
     expect(page.locator("body")).to_contain_text("access_denied")
+    expect(page.locator("body")).to_contain_text(
+        "Aucune des valeurs pour eduPersonAffiliation n'est autorisée: ['student', 'member']"
+    )
 
 
 @pytest.mark.skipif(

@@ -14,6 +14,7 @@ FRONTEND_MODULES:
 MICRO_SERVICES:
   - plugins/microservices/filter_attributes.yaml
   - plugins/microservices/attribute_authorization.yaml
+  - plugins/microservices/affiliation_checker.yaml
   - plugins/microservices/primary_identifier.yaml
   - plugins/microservices/static_attributes.yaml
   - plugins/microservices/attribute_processor.yaml
