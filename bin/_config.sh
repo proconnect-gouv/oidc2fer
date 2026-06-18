@@ -6,9 +6,6 @@ REPO_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd)"
 UNSET_USER=0
 
 TERRAFORM_DIRECTORY="./env.d/terraform"
-COMPOSE_FILE="${REPO_DIR}/docker-compose.yml"
-COMPOSE_PROJECT="oidc2fer"
-
 
 # _set_user: set (or unset) default user id used to run docker commands
 #
@@ -39,13 +36,7 @@ function _set_user() {
 # options: docker compose command options
 # ARGS   : docker compose command arguments
 function _docker_compose() {
-
-    echo "🐳(compose) project: '${COMPOSE_PROJECT}' file: '${COMPOSE_FILE}'"
-    docker compose \
-        -p "${COMPOSE_PROJECT}" \
-        -f "${COMPOSE_FILE}" \
-        --project-directory "${REPO_DIR}" \
-        "$@"
+    docker compose "$@"
 }
 
 # _dc_run: wrap docker compose run command

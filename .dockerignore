@@ -11,13 +11,11 @@ venv
 **/.DS_Store
 
 # Docker
-docker-compose.*
+compose.*
 env.d
-!env.d/development/certs
 
 # Docs
 docs
-*.md
 *.log
 
 # Development/test cache & configurations

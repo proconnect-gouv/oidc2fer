@@ -2,20 +2,20 @@
 FROM python:3.14.3-slim-trixie AS common
 
 # Install xmlsec1 dependencies required for xmlsec (for SAML)
-# Needs to be kept before the `pip install`
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
     apt-get -y upgrade && \
     apt-get install -qy --no-install-recommends xmlsec1 && \
     rm -rf /var/lib/apt/lists/*
 
-# Silence pip warnings about running as root in a container
-ENV PIP_ROOT_USER_ACTION=ignore
-
-# We want the most up-to-date stable pip release
-RUN pip install --upgrade pip
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:0.11.21 /uv /usr/local/bin/uv
 
 ENV PYTHONUNBUFFERED=1
+# Keep uv's venv inside the project so it is easy to mount over in dev
+ENV UV_PROJECT_ENVIRONMENT=/app/.venv
+# Make the venv's binaries available on PATH so we don't need `uv run` at runtime
+ENV PATH="/app/.venv/bin:$PATH"
 
 # Give the "root" group the same permissions AS the "root" user on /etc/passwd
 # to allow a user belonging to the root group to add new users; typically the
@@ -43,27 +43,31 @@ FROM common AS development
 
 # Install curl (for healthchecks)
 RUN export DEBIAN_FRONTEND=noninteractive && \
-    apt-get update && apt-get install -qy curl
-
-# Playwright browsers
-ENV PLAYWRIGHT_BROWSERS_PATH=/pw-browsers
-RUN pip install playwright
-RUN playwright install --with-deps webkit
-
-# Test root CA
-COPY env.d/development/certs/mkcert-root-ca.pem /usr/local/share/ca-certificates/mkcert-root-ca.crt
-RUN update-ca-certificates
+    apt-get update && apt-get install -qy curl && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copy project file to list dependencies
-COPY ./src/satosa/pyproject.toml /app/
+# Install Playwright browsers (webkit only)
+ENV PLAYWRIGHT_BROWSERS_PATH=/pw-browsers
+# playwright version hardcoded here to avoid depending on pyproject.toml
+RUN uv tool run playwright@1.60.0 install --with-deps webkit
 
-# Install oidc2fer in editable mode along with development dependencies
-RUN pip install -e .[dev]
+# Copy lock file and project metadata first to cache the install layer
+COPY pyproject.toml README.md LICENSE uv.lock .python-version .pylintrc ./
 
-# Copy oidc2fer application (see .dockerignore)
-COPY ./src/satosa /app/
+# Install all dependencies including dev group
+RUN uv sync --locked --group dev --no-install-project
+
+# Copy the rest of the project (satosa runtime config, tests)
+COPY src/ src/
+COPY satosa/ satosa/
+COPY tests/ tests/
+
+# Run uv sync again installing project
+RUN uv sync --locked --group dev
+
+RUN chown -R ${DOCKER_USER} /app
 
 # Switch to unprivileged user
 USER ${DOCKER_USER}
@@ -71,13 +75,17 @@ USER ${DOCKER_USER}
 # ---- Production image (keep last so it is the default target) ----
 FROM common AS production
 
-# Copy oidc2fer application (see .dockerignore)
-COPY ./src/satosa /app/
-
 WORKDIR /app
 
-# Uninstall pip, setuptools and wheel after installation to reduce attack surface
-RUN pip install . && pip uninstall -y setuptools wheel pip
+# Copy lock file and project metadata first to cache the install layer
+COPY pyproject.toml README.md LICENSE uv.lock .python-version ./
+COPY src/ src/
+
+# Install only production dependencies (no dev group)
+RUN uv sync --locked --no-group dev
+
+# Copy SATOSA runtime config
+COPY satosa/ satosa/
 
 # Switch to unprivileged user
 USER ${DOCKER_USER}

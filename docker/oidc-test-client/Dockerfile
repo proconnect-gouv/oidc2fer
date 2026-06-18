@@ -1,10 +1,14 @@
 FROM python:3.14.3-slim-trixie
 
-COPY . /app
+COPY --from=ghcr.io/astral-sh/uv:0.11.21 /uv /usr/local/bin/uv
+
+COPY requirements.txt /app/requirements.txt
 
 WORKDIR /app
 
-RUN pip install -r requirements.txt
+RUN uv pip install --system -r requirements.txt
+
+COPY . /app/
 
 HEALTHCHECK --start-period=30s --start-interval=1s CMD curl --fail http://localhost:5000/healthz
 

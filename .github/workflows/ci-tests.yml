@@ -23,14 +23,12 @@ jobs:
         run: git log
       - name: Enforce absence of print statements in code
         run: |
-          ! git diff origin/${{ github.event.pull_request.base.ref }}..HEAD -- . ':(exclude).github/**' | grep "print("
+          ! git diff origin/${{ github.event.pull_request.base.ref }}..HEAD -- src/oidc2fer | grep "print("
       - name: Check absence of fixup commits
         run: |
           ! git log | grep 'fixup!'
-      - name: Install gitlint
-        run: pip install --user requests gitlint
-      - name: Lint commit messages added to main
-        run: ~/.local/bin/gitlint --commits origin/${{ github.event.pull_request.base.ref }}..HEAD
+      - name: Run gitlint
+        run: uvx --with requests gitlint --commits origin/${{ github.event.pull_request.base.ref }}..HEAD
 
   check-changelog:
     runs-on: ubuntu-latest
@@ -60,47 +58,41 @@ jobs:
 
   lint-back:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: src/satosa
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-      - name: Install Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: '3.14'
+          version: "0.11.21"
       - name: Install development dependencies
         run: |
           # Python's xmlsec requirement
           sudo apt-get update -y -q && sudo apt-get install -y -q xmlsec1 libxmlsec1-dev
-          pip install --user .[dev]
+          uv sync --locked --group dev
       - name: Check code formatting with ruff
-        run: ~/.local/bin/ruff format . --diff
+        run: uv run ruff format src tests satosa --diff
       - name: Lint code with ruff
-        run: ~/.local/bin/ruff check .
+        run: uv run ruff check src tests satosa
       - name: Lint code with pylint
-        run: ~/.local/bin/pylint .
+        run: uv run pylint src/oidc2fer
 
   test-back:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: src/satosa
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-      - name: Install Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: '3.14'
+          version: "0.11.21"
       - name: Install development dependencies
         run: |
           # Python's xmlsec requirement
           sudo apt-get update -y -q && sudo apt-get install -y -q xmlsec1 libxmlsec1-dev
-          pip install --user .[dev]
+          uv sync --locked --group dev
       - name: Run tests
-        run: ~/.local/bin/pytest
+        run: uv run pytest
 
   helmfile-lint:
     runs-on: ubuntu-latest
