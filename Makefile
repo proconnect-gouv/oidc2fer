@@ -105,12 +105,12 @@ lint: \
 
 lint-ruff-format: ## format back-end python sources with ruff
 	@echo 'lint:ruff-format started…'
-	@$(COMPOSE_RUN_APP) ruff format .
+	@$(COMPOSE_RUN_APP) ruff format src tests satosa
 .PHONY: lint-ruff-format
 
 lint-ruff-check: ## lint back-end python sources with ruff
 	@echo 'lint:ruff-check started…'
-	@$(COMPOSE_RUN_APP) ruff check . --fix
+	@$(COMPOSE_RUN_APP) ruff check src tests satosa --fix
 .PHONY: lint-ruff-check
 
 lint-pylint: ## lint back-end python sources with pylint only on changed files from main

@@ -2,8 +2,8 @@
 # OIDC2FER package
 #
 [build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
+requires = ["uv_build >= 0.11, < 0.12"]
+build-backend = "uv_build"
 
 [project]
 name = "oidc2fer"
@@ -13,14 +13,14 @@ classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: End Users/Desktop",
     "Intended Audience :: System Administrators",
-    "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.14",
 ]
 description = "A gateway from RENATER's FER to ProConnect's OIDC provider, built on top of SATOSA."
 keywords = ["OIDC", "SAML", "Shibboleth", "FER", "RENATER"]
-license = { file = "LICENSE" }
+license = "MIT"
+license-files = ["LICENSE"]
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
@@ -36,7 +36,7 @@ dependencies = [
 "Homepage" = "https://github.com/proconnect-gouv/oidc2fer"
 "Repository" = "https://github.com/proconnect-gouv/oidc2fer"
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
     "pylint==3.1.0",
     "pytest-cov==4.1.0",
@@ -45,9 +45,8 @@ dev = [
     "pytest-playwright==0.7.2",
 ]
 
-[tool.setuptools]
-packages = { find = { where = ["."], exclude = ["tests"] } }
-zip-safe = true
+[tool.uv]
+package = true
 
 [tool.ruff]
 exclude = [
@@ -56,12 +55,14 @@ exclude = [
     "build",
     "venv",
     "__pycache__",
+    "scripts",
+    "docker/oidc-test-client",
+    "gitlint",
 ]
 line-length = 88
 
-
 [tool.ruff.lint]
-ignore= ["DJ001", "PLR2004"]
+ignore = ["DJ001", "PLR2004"]
 select = [
     "B", # flake8-bugbear
     "BLE", # flake8-blind-except
@@ -79,19 +80,22 @@ select = [
 ]
 
 [tool.ruff.lint.isort]
-section-order = ["future","standard-library","third-party","oidc2fer","first-party","local-folder"]
-sections = { oidc2fer=["core"] }
+section-order = ["future", "standard-library", "third-party", "oidc2fer", "first-party", "local-folder"]
+sections = { oidc2fer = ["core"] }
 
 [tool.ruff.lint.per-file-ignores]
-"**/tests/*" = ["S", "SLF"]
+"tests/**" = ["S", "SLF"]
 
 [tool.pytest.ini_options]
 addopts = [
     "-v",
     "--cov-report",
     "term-missing",
-    # Allow test files to have the same name in different directories.
     "--import-mode=importlib",
+    "--browser webkit",
+    "--tracing on",
+    "--video on",
+    "--screenshot on",
 ]
 python_files = [
     "test_*.py",

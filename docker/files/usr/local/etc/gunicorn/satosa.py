@@ -70,14 +70,18 @@ class NoPingFilter(logging.Filter):
     """
 
     def filter(self, record: logging.LogRecord) -> bool:
-        return not( record.args.get("m", "") == "GET"
-                   and record.args.get("U", "") == "/ping"
-                   and str(record.args.get("s", "")) == "200" )
+        return not (
+            record.args.get("m", "") == "GET"
+            and record.args.get("U", "") == "/ping"
+            and str(record.args.get("s", "")) == "200"
+        )
 
 
 bind = ["0.0.0.0:8000"]
 name = "satosa"
-python_path = "/app"
+# Change to the SATOSA runtime config directory so relative paths in
+# proxy_conf.yaml, plugins/, and static/ resolve correctly.
+chdir = "/app/satosa"
 wsgi_app = "oidc2fer.wsgi:app"
 
 # Run

@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0),
 and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+- migrate Python packaging to uv: uv_build backend, dependency-groups, uv.lock
+- move importable code to src/oidc2fer, SATOSA runtime config to satosa/
+- replace pip-based Docker builds with uv sync --locked
+
 ## [1.0.14] - 2026-05-20
 - match eduPersonAffiliation case-insensitively
 
