@@ -1,5 +1,6 @@
 import csv
 import json
+import os
 import urllib.request
 import sys
 import time
@@ -101,7 +102,10 @@ def get_grist_idps():
     grist_domains = {}
     url = "https://grist.numerique.gouv.fr/api/docs/gNkPzdjPZnv8rjdedfYhry/tables/Fournisseurs_d_identite/records"
     try:
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        req = urllib.request.Request(url, headers={
+            'User-Agent': 'Mozilla/5.0',
+            'Authorization': f'Bearer { os.environ.get("GRIST_API_KEY") }'
+        })
         with urllib.request.urlopen(req) as response:
             data = json.loads(response.read().decode())
             
@@ -123,6 +127,7 @@ def get_grist_idps():
                     grist_domains[fqdn] = idp_name
     except Exception as e:
         print(f"{RED}Error fetching Grist IdPs: {e}{RESET}", file=sys.stderr)
+        raise e
     return grist_domains
 
 def process_entry_siret(entry, check_siret, entity_to_siret):
