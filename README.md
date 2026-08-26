@@ -20,6 +20,18 @@ $ docker compose -v
 > ⚠️ You may need to run the following commands with `sudo` but this can be
 > avoided by assigning your user to the `docker` group.
 
+### Local development (without Docker)
+
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/) then:
+
+```bash
+uv sync --group dev   # creates .venv and installs all dependencies
+uv run pytest         # run unit tests
+uv run ruff format src tests satosa
+uv run ruff check src tests satosa
+uv run pylint src/oidc2fer
+```
+
 ### Project bootstrap
 
 The easiest way to start working on the project is to use GNU Make:

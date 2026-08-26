@@ -27,12 +27,10 @@ do
 done
 
 if [[ -n "${diff_from}" ]]; then
-    # Run pylint only on modified files located in src/satosa
+    # Run pylint only on modified files located in src/oidc2fer
     # (excluding deleted files)
     # shellcheck disable=SC2207
-    paths=($(git diff "${diff_from}" --name-only --diff-filter=d -- src/satosa | grep -E '^src/satosa/.*\.py$'))
+    paths=($(git diff "${diff_from}" --name-only --diff-filter=d -- src/oidc2fer | grep -E '^src/oidc2fer/.*\.py$'))
 fi
 
-# Fix docker vs local path when project sources are mounted as a volume
-read -ra paths <<< "$(echo "${paths[@]}" | sed "s|src/satosa/||g")"
 _dc_run app-dev pylint "${paths[@]}" "${args[@]}"

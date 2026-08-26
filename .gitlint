@@ -22,6 +22,9 @@
 # See http://jorisroovers.github.io/gitlint/user_defined_rules for details
 extra-path=gitlint/
 
+# See https://jorisroovers.com/gitlint/latest/configuration/general_options/#regex-style-search
+regex-style-search=True
+
 # [title-max-length]
 # line-length=80
 

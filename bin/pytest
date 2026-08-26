@@ -4,4 +4,4 @@ source "$(dirname "${BASH_SOURCE[0]}")/_config.sh"
 
 _dc_run \
     app-dev \
-    pytest "$@"
+    uv run pytest "$@"
