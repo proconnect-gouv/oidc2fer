@@ -54,7 +54,7 @@ def oidc_to_renater(
         "email": expected_email,
         "given_name": expected_given_name,
         "usual_name": expected_usual_name,
-        "siret": "12345678200010",
+        "siret": "13002526500013",
     }.items() <= userinfo.items()
     return id_token, access_token
 
@@ -150,7 +150,7 @@ def pro_connect_to_renater(
         "email": expected_email,
         "given_name": expected_given_name,
         "usual_name": expected_usual_name,
-        "siret": "12345678200010",
+        "siret": "13002526500013",
     }.items() <= result.items()
     return result
 
