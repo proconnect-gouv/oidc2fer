@@ -13,7 +13,7 @@ class TestEntityIdToSiretMapper:
                 "attribute": "siret",
                 "mapping_json": json.dumps(
                     {
-                        "https://idp.example.fr": "12345678200010",
+                        "https://idp.example.fr": "13002526500013",
                     }
                 ),
             },
@@ -30,7 +30,7 @@ class TestEntityIdToSiretMapper:
         )
         ctx = Context()
         mapper.process(ctx, resp)
-        assert resp.attributes["siret"] == "12345678200010"
+        assert resp.attributes["siret"] == "13002526500013"
 
     def test_does_not_set_siret_for_unknown_entityid(self):
         mapper = self.create_mapper()
