@@ -17,6 +17,6 @@ env:
   - name: OIDC_CLIENT_SECRET
     value: oidc-test-secret
   - name: OIDC_SCOPES
-    value: openid,uid,given_name,usual_name,email,siret
+    value: openid,uid,given_name,usual_name,email,siret,phone,belonging_population,organizational_unit,chorusdt,siren
   - name: EXTRA_ROOT_CA
     value: {{ exec "mkcert" (list "-CAROOT") | trim | printf "%s/rootCA.pem" | readFile | quote }}
