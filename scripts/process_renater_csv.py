@@ -159,8 +159,11 @@ def get_grist_idps():
                     or record.get("id")
                 )
 
+                idp_enabled = fields.get("Actif") == "Oui"
+                idp_routed = fields.get("Routage_active") == "Oui"
+
                 for fqdn in fqdns:
-                    grist_domains[fqdn] = idp_name
+                    grist_domains[fqdn] = idp_name + (f"[DISABLED]" if not idp_enabled else "") + (f"[NON-ROUTED]" if not idp_routed else "")
     except Exception as e:
         print(f"{RED}Error fetching Grist IdPs: {e}{RESET}", file=sys.stderr)
         raise e
