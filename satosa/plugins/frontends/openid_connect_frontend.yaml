@@ -43,7 +43,14 @@ config:
       - uid
       - given_name
       - usual_name
+      # The following scopes are not provided by this gateway but ProConnect
+      # requests them, so we list them here to avoid a warning.
       - siret
+      - phone
+      - belonging_population
+      - organizational_unit
+      - chorusdt
+      - siren
 
     # Set code/token lifetimes as short as possible
     authorization_code_lifetime: 60

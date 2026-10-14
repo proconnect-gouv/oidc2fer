@@ -76,7 +76,7 @@ services:
       #OIDC_PROVIDER: https://oidc2fer-staging.beta.numerique.gouv.fr
       OIDC_CLIENT_ID: oidc-test-client
       OIDC_CLIENT_SECRET: oidc-test-secret
-      OIDC_SCOPES: openid,uid,given_name,usual_name,email,siret
+      OIDC_SCOPES: openid,uid,given_name,usual_name,email,siret,phone,belonging_population,organizational_unit,chorusdt,siren
     extra_hosts:
       - "oidc2fer.127.0.0.1.nip.io:host-gateway"
 
